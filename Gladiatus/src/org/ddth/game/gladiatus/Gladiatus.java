@@ -1,5 +1,7 @@
 package org.ddth.game.gladiatus;
 
+import org.ddth.game.gladiatus.model.Character;
+import org.ddth.game.gladiatus.support.maths.Range;
 import org.ddth.game.gladiatus.ui.CharacterView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -26,14 +28,25 @@ public class Gladiatus {
 	public void open() {
 		final Display display = Display.getDefault();
 		final Shell shell = new Shell();
-		shell.setSize(500, 298);
+		shell.setSize(280, 569);
 		shell.setText("SWT Application");
-		//
 
 		shell.open();
 
 		final CharacterView characterView = new CharacterView(shell, SWT.NONE);
-		characterView.setBounds(0, 0, 492, 271);
+		Character character = new Character("instcode");
+		character.setName("instcode");
+		character.setLevel(7);
+		character.setAgility(20);
+		character.setArmor(203);
+		character.setCharisma(20);
+		character.setStrength(20);
+		character.setConstitution(20);
+		character.setSkill(100);
+		character.setDamage(new Range(29, 30));
+		
+		characterView.setModel(character);
+		characterView.setBounds(0, 0, 270, 543);
 	
 		shell.layout();
 		while (!shell.isDisposed()) {

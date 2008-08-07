@@ -1,15 +1,22 @@
 package org.ddth.game.gladiatus.ui;
 
+import org.ddth.game.gladiatus.core.Game;
+import org.ddth.game.gladiatus.core.Stats;
+import org.ddth.game.gladiatus.model.Character;
 import org.ddth.game.gladiatus.ui.widget.Meter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class CharacterView extends Composite {
-
-	private String[] names = { "Strength", "Skill", "Agility", "Constitution", "Charisma", "Armour", "Damage" };
+	private NameBar nameBar;
+	private Doll doll;
+	
+	private Meter[] meters = new Meter[Stats.values().length];
+	private Label[] statistics = new Label[Stats.values().length];
 	
 	/**
 	 * Create the composite
@@ -19,41 +26,83 @@ public class CharacterView extends Composite {
 	public CharacterView(Composite parent, int style) {
 		super(parent, style);
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 4;
+		gridLayout.numColumns = 3;
 		setLayout(gridLayout);
-		addRow("Level", "7");
-		for (int i = 0; i < 5; i++) {
-			addRow(names[i], (i + 1)*20, 100);
-		}
-		addRow("Chance to Hit", "34%");
-		addRow("Chance to Double Hit", "94%");
-		//
+		createNameBar();
+		createDoll();
+		createGeneralView();
 	}
 
 	public void setModel(Character character) {
+		int level = character.getLevel();
+		setStat(Stats.LEVEL, String.valueOf(level));
+		setStat(Stats.STRENGTH, character.getStrength(), Game.getInstance().getMaxStrength(level));
+		setStat(Stats.SKILL, character.getSkill(), Game.getInstance().getMaxSkill(level));
+		setStat(Stats.AGILITY, character.getAgility(), Game.getInstance().getMaxAgility(level));
+		setStat(Stats.CONSTITUTION, character.getConstitution(), Game.getInstance().getMaxConstitution(level));
+		setStat(Stats.CHARISMA, character.getCharisma(), Game.getInstance().getMaxCharisma(level));
+		setStat(Stats.ARMOR, String.valueOf(character.getArmor()));
+		setStat(Stats.DAMAGE, String.valueOf(character.getDamage()));
+		setStat(Stats.CHANCE_TO_HIT, "0%");
+		setStat(Stats.CHANCE_TO_DOUBLE_HIT, "0%");
 		
+		nameBar.setName(character.getName());
 	}
 	
-	protected void addRow(String name, String value) {
-		Label lblName = new Label(this, SWT.NONE);
-		lblName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblName.setText(name);
-
-		Label lblValue = new Label(this, SWT.NONE);
-		lblValue.setText(value);
+	private void setStat(Stats stat, int value, int max) {
+		setStat(stat, value + "/" + max);
+		meters[stat.index()].setMeter(value * 100 / max);
 	}
 	
-	protected int addRow(String name, int value, int max) {
-		new Label(this, SWT.NONE);
-		Label lblName = new Label(this, SWT.NONE);
-		lblName.setText(name);
+	private void setStat(Stats stat, String value) {
+		statistics[stat.index()].setText(value);
+	}
 
-		Meter meter = new Meter(this, SWT.NONE);
-		meter.setMeter(value * 100 / max);
-		meter.setLayoutData(new GridData(200, 20));
+	private void createGeneralView() {
+		addStat(Stats.LEVEL);
+		addStat(Stats.STRENGTH);
+		addStat(Stats.SKILL);
+		addStat(Stats.AGILITY);
+		addStat(Stats.CONSTITUTION);
+		addStat(Stats.CHARISMA);
+		addStat(Stats.ARMOR);
+		addStat(Stats.DAMAGE);
+		addStat(Stats.CHANCE_TO_HIT);
+		addStat(Stats.CHANCE_TO_DOUBLE_HIT);
+	}
+
+	private void createNameBar() {
+		nameBar = new NameBar(this, SWT.NONE);
+		GridData nameBarLayoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 3, 1);
+		Point barSize = nameBar.getSize();
+		nameBarLayoutData.widthHint = barSize.x;
+		nameBarLayoutData.heightHint = barSize.y;
+		nameBar.setLayoutData(nameBarLayoutData);
+	}
+
+	private void createDoll() {
+		doll = new Doll(this, SWT.NONE);
+		GridData dollLayoutData = new GridData(SWT.CENTER, SWT.CENTER, true, false, 3, 1);
+		Point dollSize = doll.getSize();
+		dollLayoutData.widthHint = dollSize.x;
+		dollLayoutData.heightHint = dollSize.y;
+		doll.setLayoutData(dollLayoutData);
+	}
+
+	private int addStat(Stats stat) {
+		Label lblName = new Label(this, SWT.NONE);
+		lblName.setText(stat.value());
+		if (!stat.isPrimary()) {
+			lblName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		}
+		else {
+			Meter meter = new Meter(this, SWT.NONE);
+			meter.setLayoutData(new GridData(150, 20));
+			meters[stat.index()] = meter;
+		}
 
 		Label lblValue = new Label(this, SWT.CENTER);
-		lblValue.setText(value + "/" + max);
+		statistics[stat.index()] = lblValue;
 		return 0;
 	}
 }

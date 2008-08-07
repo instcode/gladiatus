@@ -1,58 +1,31 @@
 package org.ddth.game.gladiatus.model;
 
-public class Item {
-	private String description;
-	private String type;
-	private String name;
-	private String effect;
-	private int price;
-	private int level;
-	
-	public String getDescription() {
-		return description;
+public class Item extends Equipment {
+	private int width;
+	private int height;
+	private boolean isEquiped;
+
+	public boolean isEquiped() {
+		return isEquiped;
 	}
-	
-	public void setDescription(String description) {
-		this.description = description;
+
+	public void setEquiped(boolean isEquiped) {
+		this.isEquiped = isEquiped;
 	}
-	
-	public String getType() {
-		return type;
+
+	public int getWidth() {
+		return width;
 	}
-	
-	public void setType(String type) {
-		this.type = type;
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
-	
-	public String getName() {
-		return name;
+
+	public int getHeight() {
+		return height;
 	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setEffect(String effect) {
-		this.effect = effect;
-	}
-	
-	public String getEffect() {
-		return effect;
-	}
-	
-	public int getPrice() {
-		return price;
-	}
-	
-	public void setPrice(int price) {
-		this.price = price;
-	}
-	
-	public int getLevel() {
-		return level;
-	}
-	
-	public void setLevel(int level) {
-		this.level = level;
+
+	public void setHeight(int height) {
+		this.height = height;
 	}
 }

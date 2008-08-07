@@ -50,7 +50,7 @@ public class Meter extends Canvas implements PaintListener {
 		int offsetY = Math.max(0, (event.height - size.y) / 2);
 		int offsetX = Math.max(0, (width - size.x) / 2);
 		gc.drawText(text, event.x + offsetX, event.y + offsetY, true);
-		gc.setForeground(background);
-		gc.setBackground(foreground);
+		gc.setForeground(foreground);
+		gc.setBackground(background);
 	}
 }

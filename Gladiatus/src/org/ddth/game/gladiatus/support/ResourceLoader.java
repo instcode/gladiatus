@@ -1,60 +1,72 @@
 package org.ddth.game.gladiatus.support;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class ResourceLoader {
-	public static final String LANG_DEFAULT = "gladiatus_en";
-	private static ResourceBundle resources;
-	
-	static {
-		try {
-			ResourceLoader.resources = ResourceBundle.getBundle(LANG_DEFAULT);
-		}
-		catch (MissingResourceException e) {
-			// Empty
-		}
+	/**
+	 * Map image names to images
+	 */
+	private static HashMap<String, Image> imageMap = new HashMap<String, Image>();
+	private static ResourceLoader m_instance = null;
+
+	private ResourceLoader() {
+		// Singleton
 	}
 
-	public Image getImage(String path) {
-		return new Image(Display.getCurrent(), ResourceLoader.class.getResourceAsStream(path));
+	public InputStream loadResource(ClassLoader classLoader, String sPath) {
+		return classLoader.getResourceAsStream(sPath);
+	}
+	
+	public static ResourceLoader getInstance() {
+		if (m_instance == null) {
+			m_instance = new ResourceLoader();
+		}
+		return m_instance;
+	}
+
+	public Image getImage(ClassLoader classLoader, String sPath) {
+		Image image = imageMap.get(sPath);
+		if (image == null) {
+			InputStream inputStream = loadResource(classLoader, sPath);
+			image = loadImage(inputStream);
+			imageMap.put(sPath, image);
+		}
+		return image;
+	}
+
+	private Image loadImage(InputStream inputStream) {
+		return new Image(Display.getCurrent(), inputStream);
 	}
 	
 	/**
-	 * Loads a string from a resource file using a key. If the key does not
-	 * exist, it is used as the result.
-	 * 
-	 * @param key
-	 *            the name of the string resource
-	 * @return the string resource
+	 * Returns an image stored in the file at the specified path relative to the
+	 * specified class
+	 *
+	 * @param clazz
+	 *            Class The class relative to which to find the image
+	 * @param path
+	 *            String The path to the image file
+	 * @return Image The image stored in the file at the specified path
 	 */
-	public static String getMessage(String key) {
-		if (resources == null)
-			return key;
-		try {
-			return resources.getString(key);
-		}
-		catch (MissingResourceException e) {
-			return key;
-		}
+	public Image loadImage(String path) {
+		return new Image(Display.getCurrent(), getClass().getClassLoader().getResourceAsStream(path));
 	}
-
-	/**
-	 * Loads a string from a resource file using a key and formats it using
-	 * MessageFormat. If the key does not exist, it is used as the argument to
-	 * be format().
-	 * 
-	 * @param key
-	 *            the name of the string resource
-	 * @param args
-	 *            the array of strings to substitute
-	 * @return the string resource
-	 */
-	public static String getMessage(String key, Object[] args) {
-		return MessageFormat.format(getMessage(key), args);
+	
+	public byte[] readStream(InputStream inputStream) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		int tempSize = 1024;
+		byte[] temp = new byte[tempSize];
+		int length = inputStream.read(temp);
+		while (length != -1) {
+			outputStream.write(temp, 0, length);
+			length = inputStream.read(temp);
+		}
+		return outputStream.toByteArray();
 	}
 }
