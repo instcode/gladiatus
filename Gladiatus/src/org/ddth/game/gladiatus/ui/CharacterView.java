@@ -92,7 +92,7 @@ public class CharacterView extends Composite {
 	private int addStat(Stats stat) {
 		Label lblName = new Label(this, SWT.NONE);
 		lblName.setText(stat.value());
-		if (!stat.isPrimary()) {
+		if (!stat.primary()) {
 			lblName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		}
 		else {

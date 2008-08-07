@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 public class Message {
 	public static final String LANG_ENGLISH = "gladiatus_en";
-	public static final String LANG_VIET = "gladiatus_vi";
+	public static final String LANG_VIETNAMESE = "gladiatus_vi";
 	
 	private static Message instance = new Message();
 	

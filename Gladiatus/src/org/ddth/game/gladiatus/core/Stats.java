@@ -22,7 +22,7 @@ public enum Stats {
 		this.isPrimary = isPrimary;
 	}
 
-	public boolean isPrimary() {
+	public boolean primary() {
 		return isPrimary;
 	}
 	
