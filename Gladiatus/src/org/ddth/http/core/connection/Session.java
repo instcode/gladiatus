@@ -7,58 +7,69 @@
  **************************************************/
 package org.ddth.http.core.connection;
 
-import org.apache.http.client.CookieStore;
-import org.apache.log4j.Logger;
-import org.ddth.http.core.handler.SessionListener;
-import org.ddth.http.impl.connection.ThreadConnectionModel;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Session<T extends State> implements Runnable {
+import org.ddth.http.core.handler.RequestHandler;
+import org.ddth.http.core.handler.SessionEvent;
+import org.ddth.http.core.handler.SessionListener;
+import org.ddth.http.impl.connection.RequestFuture;
+import org.ddth.http.impl.connection.ThreadSafeConnectionModel;
+
+public class Session implements Runnable {
 	/**
 	 * Make sure we don't flood the server continuously :D...
 	 * We should appear as a "well-educated" grabber ;-) 
 	 */
 	private static final long DELAY_TIME_BETWEEN_TWO_REQUESTS = 2000;
 
-	private Logger logger = Logger.getLogger(Session.class);
+	private boolean isRunning = false;
+	private Thread workerThread = null;
+	private Queue<RequestFuture> queue = new ConcurrentLinkedQueue<RequestFuture>();
+	private ConnectionModel connectionModel = new ThreadSafeConnectionModel();
+	private SessionListener listener;
 
-	private boolean isRunning;
-	private Thread workerThread;
-	
-	private T state;
-	private ConnectionModel connectionModel;
-	private SessionListener<T> listener;
-
-	public Session(String charsetEncoding, CookieStore cookieStore) {
-		//FIXME
-		this.connectionModel = new ThreadConnectionModel(null, 1);
-	}
-
-	public T getState() {
-		return state;
-	}
-
-	/**
-	 * Resume to the given state
-	 * @param state
-	 */
-	public void setState(T state) {
-		if (isRunning) {
-			throw new IllegalStateException("You have to stop the current state first.");
-		}
-		this.state = state;
-	}
-
-	public Request queueRequest(String url, RequestHandler handler) {
-		if (state == null) {
-			throw new IllegalStateException("Unknown session state");
-		}
-		Request request = new Request(url, handler);
-		state.queue(request);
-		return request;
-	}
-	
-	public void registerSessionListener(SessionListener<T> listener) {
+	public void addSessionListener(SessionListener listener) {
 		this.listener = listener;
+	}
+
+	public RequestFuture queueRequest(final String url, final RequestHandler handler) {
+		return queueRequest(new Request(url, handler));
+	}
+	
+	public RequestFuture queueRequest(Request request) {
+		final Request innerRequest = request;
+		
+		RequestFuture requestFuture = new RequestFuture() {
+			Request request = innerRequest;
+			boolean isRequested = false;
+
+			@Override
+			public Request getRequest() {
+				return request;
+			}
+
+			@Override
+			public boolean isRequested() {
+				return isRequested;
+			}
+
+			@Override
+			public void cancel() {
+				isRequested = true;
+			}
+
+			@Override
+			public void request() {
+				if (!isRequested) {
+					connectionModel.sendRequest(request);
+					isRequested = true;
+				}
+			}		
+		};
+		
+		queue.offer(requestFuture);
+		return requestFuture;
 	}
 
 	public boolean isRunning() {
@@ -72,13 +83,16 @@ public class Session<T extends State> implements Runnable {
 		if (!isRunning && workerThread == null) {
 			isRunning = true;
 			workerThread = new Thread(this);
+			workerThread.setDaemon(true);
 			workerThread.setPriority(Thread.MIN_PRIORITY);
 			workerThread.start();
 		}
 	}
 
 	/**
-	 * Stop the current worker thread without blocking...
+	 * Stop the current worker thread without blocking. Caller should
+	 * regularly check whether it is exited or not by invoking method
+	 * {@link #isRunning()}.
 	 * 
 	 * @see #stop()
 	 */
@@ -88,26 +102,31 @@ public class Session<T extends State> implements Runnable {
 	
 	/**
 	 * Stop the current worker thread and block until
-	 * it is completely exited
+	 * it is completely exited.
 	 * 
 	 * @see #pause()
 	 */
 	public void stop() {
 		pause();
+		if (workerThread != null && workerThread.isAlive()) {
+			synchronized (workerThread) {
+				while (workerThread != null) {
+					try {
+						workerThread.wait(1000);
+					}
+					catch (InterruptedException e) {
+					}
+				}
+			}
+		}
 	}
 
 	public void run() {
-		if (listener != null) {
-			listener.sessionStarted(this);
-		}
+		fireSessionChange(new SessionEvent(this, SessionEvent.SESSION_STARTED_EVENT));
 		while (isRunning) {
-			Request request = state.poll();
-			if (request != null) {
-				connectionModel.sendRequest(request);
-			}
-			else {
-				logger.debug("Couldn't make '" + request + "' request");
-				break;
+			RequestFuture requestFuture = queue.poll();
+			if (requestFuture != null) {
+				requestFuture.request();
 			}
 			try {
 				Thread.sleep(DELAY_TIME_BETWEEN_TWO_REQUESTS);
@@ -116,13 +135,16 @@ public class Session<T extends State> implements Runnable {
 			}
 		}
 		isRunning = false;
-		// Wake up all waiting threads on this thread
-		if (workerThread != null) {
-			workerThread.notifyAll();
-			workerThread = null;
-		}
+		fireSessionChange(new SessionEvent(this, SessionEvent.SESSION_ENDED_EVENT));
+		
+		// Make sure recent stop action stops waiting for this thread to exit
+		workerThread.notifyAll();
+		workerThread = null;
+	}
+	
+	protected void fireSessionChange(SessionEvent event) {
 		if (listener != null) {
-			listener.sessionStopped(this);
+			listener.sessionChanged(event);
 		}
 	}
 }

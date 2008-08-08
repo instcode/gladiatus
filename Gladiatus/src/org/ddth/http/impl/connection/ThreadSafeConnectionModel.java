@@ -8,14 +8,27 @@
 package org.ddth.http.impl.connection;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -23,12 +36,17 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.cookie.BrowserCompatSpec;
+import org.apache.http.impl.cookie.BrowserCompatSpecFactory;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 import org.ddth.http.core.connection.ConnectionModel;
 import org.ddth.http.core.connection.Request;
+import org.ddth.http.core.handler.ConnectionEvent;
 
 public class ThreadSafeConnectionModel implements ConnectionModel {
 	private Logger logger = Logger.getLogger(ThreadSafeConnectionModel.class);
@@ -44,11 +62,12 @@ public class ThreadSafeConnectionModel implements ConnectionModel {
 		HttpParams params = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(params, "Mozilla/5.0");
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-		HttpProtocolParams.setContentCharset(params, "UTF-8");
+		HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 		HttpProtocolParams.setUseExpectContinue(params, true);
 
 		ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, supportedSchemes);
 		httpClient = new DefaultHttpClient(ccm, params);
+		httpClient.getDefaultContext().setAttribute(ClientContext.COOKIE_SPEC, new BrowserCompatSpec());
 	}
 	
 	public void setup(CookieStore cookieStore) {
@@ -56,24 +75,19 @@ public class ThreadSafeConnectionModel implements ConnectionModel {
 	}
 
 	public void sendRequest(final Request request) {
-		String sURL = request.getURL();
-	
 		HttpEntity entity = null;
 		try {
-			HttpGet httpGet = new HttpGet(sURL);
-			// Prefer gzip for optimising bandwidth
-			httpGet.addHeader("Accept-Encoding", "gzip");
-			printHeader(httpGet.getAllHeaders());
-			
-			HttpResponse rsp = httpClient.execute(httpGet);
-			entity = rsp.getEntity();
+			request.getHandler().handleRequest(new ConnectionEvent(request));
+			HttpUriRequest httpRequest = createHttpRequest(request);
+			HttpResponse httpResponse = httpClient.execute(httpRequest);
+			entity = httpResponse.getEntity();
 			if (entity != null) {
+				InputStream inputStream = entity.getContent(); 
 				if (entity.getContentEncoding() != null && "gzip".equals(entity.getContentEncoding().getValue())) {
-					request.setResponseStream(new GZIPInputStream(entity.getContent()));
+					// Wrap content with GZIP input stream
+					inputStream = new GZIPInputStream(inputStream);
 				}
-				else {
-					request.setResponseStream(entity.getContent());
-				}
+				request.getHandler().handleResponse(new ConnectionEvent(request, inputStream));
 			}
 		}
 		catch (Exception e) {
@@ -92,7 +106,35 @@ public class ThreadSafeConnectionModel implements ConnectionModel {
 					logger.debug(e);
 				}
 			}
+			request.getHandler().handleClose(new ConnectionEvent(request));
 		}
+	}
+
+	private HttpUriRequest createHttpRequest(final Request request) throws URISyntaxException, UnsupportedEncodingException {
+		HttpUriRequest httpRequest = null;
+		if (request.getType() == Request.POST_REQUEST) {
+			HttpPost httpPost = new HttpPost(request.getURL());
+			List <NameValuePair> nvps = new ArrayList<NameValuePair>();
+			
+			Map<String, String> parameters = request.getParameters();
+			Iterator<String> iterator = parameters.keySet().iterator();
+			while (iterator.hasNext()) {
+				String parameter = iterator.next();
+				String value = parameters.get(parameter);
+				nvps.add(new BasicNameValuePair(parameter, value));
+			}
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+			httpRequest = httpPost;
+		}
+		else {
+			HttpGet httpGet = new HttpGet(request.getURL());
+			httpRequest = httpGet;
+		}
+		
+		// Prefer GZIP for optimizing bandwidth
+		httpRequest.addHeader("Accept-Encoding", "gzip");
+		printHeader(httpRequest.getAllHeaders());
+		return httpRequest;
 	}
 
 	private void printHeader(Header[] headers) {

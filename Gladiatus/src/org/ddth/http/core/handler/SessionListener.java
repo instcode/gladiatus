@@ -7,17 +7,11 @@
  **************************************************/
 package org.ddth.http.core.handler;
 
-import org.ddth.http.core.connection.Session;
-import org.ddth.http.core.connection.State;
 
-public interface SessionListener<T extends State> {
-	/**
-	 * Notify session is started
-	 */
-	public void sessionStarted(Session<T> session);
+public interface SessionListener {
 	
 	/**
-	 * Notify session is stopped
+	 * @param event
 	 */
-	public void sessionStopped(Session<T> session);
+	public void sessionChanged(SessionEvent event);
 }

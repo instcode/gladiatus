@@ -84,7 +84,8 @@ public class RegExpProcessor implements ConnectionListener {
 	@Override
 	public void notifyFinished(Request request) {
 		try {
-			byte[] buffer = consume(request.getResponseStream());
+			//FIXME request.getResponseStream();
+			byte[] buffer = consume(null);
 			ByteArrayInputStream byteStream = new ByteArrayInputStream(buffer);			
 			Document doc = HTML_PARSER.parse(byteStream, encoding);
 			Node body = (Node) bodyExpression.evaluate(doc, XPathConstants.NODE);

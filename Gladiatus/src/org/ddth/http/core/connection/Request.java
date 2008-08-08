@@ -7,37 +7,43 @@
  **************************************************/
 package org.ddth.http.core.connection;
 
-import java.io.InputStream;
+import java.util.Map;
+
+import org.ddth.http.core.handler.RequestHandler;
+
 
 public class Request {
+	public static final int GET_REQUEST = 0;
+	public static final int POST_REQUEST = 1;
 	
 	private String link;
+	private int type = GET_REQUEST;
 	private RequestHandler handler;
-	private InputStream inputStream;
+	private Map<String, String> parameters;
 
 	public Request(String link, RequestHandler handler) {
 		this.link = link;
 		this.handler = handler;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getURL() {
 		return link;
 	}
-
-	/**
-	 * @param inputStream
-	 */
-	public void setResponseStream(InputStream inputStream) {
-		this.inputStream = inputStream;
+	
+	public RequestHandler getHandler() {
+		return handler;
 	}
-
-	/**
-	 * @return
-	 */
-	public InputStream getResponseStream() {
-		return inputStream;
+	
+	public int getType() {
+		return type;
+	}
+	
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+	
+	public void setParamters(int type, Map<String, String> parameters) {
+		this.type = type;
+		this.parameters = parameters;
 	}
 }
