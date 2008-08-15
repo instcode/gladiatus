@@ -50,7 +50,7 @@ public class ContentParser {
 	 * @param node
 	 * @return
 	 */
-	public String getLink(Node node) {
+	public String extractLink(Node node) {
 		String link = null;
 		if (HTML_TAG_ANCHOR.equalsIgnoreCase(node.getNodeName())) {
 			link = node.getAttributes().getNamedItem(HTML_TAG_ATTR_HREF).getNodeValue();
@@ -58,7 +58,7 @@ public class ContentParser {
 		return link;
 	}
 
-	public String getRawText(Node node) {
+	public String getHTML(Node node) {
 		StringWriter writer = new StringWriter();
 		HTMLNodeBuilder builder = new HTMLNodeBuilder(writer);
 		try {

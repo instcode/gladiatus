@@ -21,9 +21,8 @@ public class Request {
 	private RequestHandler handler;
 	private Map<String, String> parameters;
 
-	public Request(String link, RequestHandler handler) {
+	public Request(String link) {
 		this.link = link;
-		this.handler = handler;
 	}
 
 	public String getURL() {

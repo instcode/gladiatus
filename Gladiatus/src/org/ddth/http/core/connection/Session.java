@@ -10,7 +10,6 @@ package org.ddth.http.core.connection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.ddth.http.core.handler.RequestHandler;
 import org.ddth.http.core.handler.SessionEvent;
 import org.ddth.http.core.handler.SessionListener;
 import org.ddth.http.impl.connection.RequestFuture;
@@ -33,8 +32,8 @@ public class Session implements Runnable {
 		this.listener = listener;
 	}
 
-	public RequestFuture queueRequest(final String url, final RequestHandler handler) {
-		return queueRequest(new Request(url, handler));
+	public RequestFuture queueRequest(String url) {
+		return queueRequest(new Request(url));
 	}
 	
 	public RequestFuture queueRequest(Request request) {
@@ -43,11 +42,6 @@ public class Session implements Runnable {
 		RequestFuture requestFuture = new RequestFuture() {
 			Request request = innerRequest;
 			boolean isRequested = false;
-
-			@Override
-			public Request getRequest() {
-				return request;
-			}
 
 			@Override
 			public boolean isRequested() {

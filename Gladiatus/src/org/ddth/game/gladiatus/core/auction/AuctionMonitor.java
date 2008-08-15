@@ -8,7 +8,8 @@ public class AuctionMonitor {
 
 	public static void main(String[] args) {
 		Session session = new Session();
-		RequestFuture future = session.queueRequest(new LoginRequest("s2.gladiatus.vn"));
+		RequestFuture future = session.queueRequest(
+				new LoginRequest("s2.gladiatus.vn", "instcode", "password"));
 		future.request();
 	}
 }

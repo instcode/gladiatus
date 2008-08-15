@@ -1,14 +1,20 @@
 package org.ddth.http.impl.connection;
 
-import org.ddth.http.core.connection.Request;
-
 public interface RequestFuture {
-
-	Request getRequest();
-	
+	/**
+	 * Check if current request is completed or not
+	 * 
+	 * @return
+	 */
 	boolean isRequested();
 	
+	/**
+	 * Cancel request in queue
+	 */
 	void cancel();
 	
+	/**
+	 * Send request now
+	 */
 	void request();
 }

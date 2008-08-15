@@ -26,7 +26,7 @@ public class Game {
 			session.start();
 			sessions.put(username, session);
 		}
-		session.queueRequest(new LoginRequest(serverAddress));
+		session.queueRequest(new LoginRequest(serverAddress, username, password));
 		return session;
 	}
 	

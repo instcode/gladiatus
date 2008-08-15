@@ -59,7 +59,7 @@ public class RegExpProcessor implements ConnectionListener {
 	}
 
 	private void parseForLinks(Node node) {
-		String link = HTML_PARSER.getLink(node);
+		String link = HTML_PARSER.extractLink(node);
 		if (link == null || link.length() == 0) {
 			return;
 		}
