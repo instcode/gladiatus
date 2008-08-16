@@ -16,14 +16,13 @@ public class BattleV033 extends Battle {
 	public void fight() {
 		gladiator1.setHealth(1000);
 		gladiator2.setHealth(1000);
-		int round = 8 + rand.nextInt(6);
-		while (round > 0) {
-			round();
-			round--;
+		int turn = 8 + rand.nextInt(7);
+		while (turn-- > 0) {
+			turn();
 		}
 	}
 
-	public void round() {
+	private void turn() {
 		turn(gladiator1, gladiator2);
 		turn(gladiator2, gladiator1);
 	}
