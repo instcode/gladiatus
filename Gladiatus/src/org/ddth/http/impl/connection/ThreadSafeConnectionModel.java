@@ -130,6 +130,7 @@ public class ThreadSafeConnectionModel implements ConnectionModel {
 		}
 		
 		// Prefer GZIP for optimizing bandwidth
+		httpRequest.addHeader("Referer", request.getURL());
 		httpRequest.addHeader("Accept-Encoding", "gzip");
 		printHeader(httpRequest.getAllHeaders());
 		return httpRequest;

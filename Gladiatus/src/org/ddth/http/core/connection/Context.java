@@ -7,15 +7,9 @@
  **************************************************/
 package org.ddth.http.core.connection;
 
-public interface State {
-	/**
-	 * @param request
-	 * @return
-	 */
-	public boolean queue(Request request);
+public interface Context {
 	
-	/**
-	 * @return
-	 */
-	public Request poll();
+	public String getAttribute(String key);
+	
+	public void setAttribute(String key, String value);
 }

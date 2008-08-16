@@ -27,7 +27,7 @@ public class LoginRequest extends Request implements RequestHandler {
 	private static Logger logger = Logger.getLogger(LoginRequest.class);
 
 	public LoginRequest(String serverAddress, String username, String password) {
-		super("http://" + serverAddress + "/game/index.php?mod=login", null);
+		super("http://" + serverAddress + "/game/index.php?mod=login");
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("user", username);
 		parameters.put("pass", password);

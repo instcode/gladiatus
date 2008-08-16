@@ -12,6 +12,7 @@ public class Character {
 	private int constitution;
 	private int charisma;
 	private int armor;
+	private int intelligent;
 	private Range damage;
 	
 	public Character(String id) {
@@ -92,5 +93,13 @@ public class Character {
 
 	public void setDamage(Range damage) {
 		this.damage = damage;
+	}
+
+	public void setIntelligent(int intelligent) {
+		this.intelligent = intelligent;
+	}
+
+	public int getIntelligent() {
+		return intelligent;
 	}
 }

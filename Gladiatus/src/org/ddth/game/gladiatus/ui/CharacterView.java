@@ -1,6 +1,6 @@
 package org.ddth.game.gladiatus.ui;
 
-import org.ddth.game.gladiatus.core.Game;
+import org.ddth.game.gladiatus.core.GameHelper;
 import org.ddth.game.gladiatus.core.Stats;
 import org.ddth.game.gladiatus.model.Character;
 import org.ddth.game.gladiatus.ui.widget.Meter;
@@ -36,11 +36,11 @@ public class CharacterView extends Composite {
 	public void setModel(Character character) {
 		int level = character.getLevel();
 		setStat(Stats.LEVEL, String.valueOf(level));
-		setStat(Stats.STRENGTH, character.getStrength(), Game.getInstance().getMaxStrength(level));
-		setStat(Stats.SKILL, character.getSkill(), Game.getInstance().getMaxSkill(level));
-		setStat(Stats.AGILITY, character.getAgility(), Game.getInstance().getMaxAgility(level));
-		setStat(Stats.CONSTITUTION, character.getConstitution(), Game.getInstance().getMaxConstitution(level));
-		setStat(Stats.CHARISMA, character.getCharisma(), Game.getInstance().getMaxCharisma(level));
+		setStat(Stats.STRENGTH, character.getStrength(), GameHelper.getInstance().getMaxStrength(character));
+		setStat(Stats.SKILL, character.getSkill(), GameHelper.getInstance().getMaxSkill(character));
+		setStat(Stats.AGILITY, character.getAgility(), GameHelper.getInstance().getMaxAgility(character));
+		setStat(Stats.CONSTITUTION, character.getConstitution(), GameHelper.getInstance().getMaxConstitution(character));
+		setStat(Stats.CHARISMA, character.getCharisma(), GameHelper.getInstance().getMaxCharisma(character));
 		setStat(Stats.ARMOR, String.valueOf(character.getArmor()));
 		setStat(Stats.DAMAGE, String.valueOf(character.getDamage()));
 		setStat(Stats.CHANCE_TO_HIT, "0%");
