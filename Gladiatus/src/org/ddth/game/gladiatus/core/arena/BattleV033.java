@@ -14,8 +14,8 @@ public class BattleV033 extends Battle {
 
 	@Override
 	public void fight() {
-		gladiator1.setHealth(1000);
-		gladiator2.setHealth(1000);
+		gladiator1.setHealth(10000);
+		gladiator2.setHealth(10000);
 		int turn = 8 + rand.nextInt(7);
 		while (turn-- > 0) {
 			turn();

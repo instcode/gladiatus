@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project name="Gladiatus" default="build" basedir=".">
+	<!-- Common variables -->
+	<property environment="env" />
+	<property name="build.type" value="RELEASE" />
+	<property name="build.version" value="1.0.0" />
+
+	<tstamp>
+		<format property="build.dstamp" pattern="yyyy.MM.dd - HH:mm:ss +7.00 "/>
+	</tstamp>
+
+	<!-- Debug Flag -->
+	<condition property="java.debug" value="true">
+		<equals arg1="${build.type}" arg2="DEBUG" casesensitive="true"/>
+	</condition>
+	<property name="java.debug" value="false"/>
+
+	<!-- File locations -->
+	<property name="src.home" value="src"/>
+	<property name="res.home" value="res"/>
+	<patternset id="dest.exclude">
+		<exclude name="package cache/"/>
+		<exclude name="dependency cache/"/>
+	</patternset>
+
+	<!-- Build locations -->
+	<property name="build.local" value="classes"/>
+	<property name="dist.local" value="dist"/>
+	<property name="dist.file" value="${ant.project.name}-${build.version}.jar"/>
+	
+	<!-- Classpath -->
+	<path id="build.classpath">
+		<fileset dir="lib/">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="classes"/>
+	</path>
+
+	<!-- Targets -->
+	<target name="init">
+		<echo message="************************"/>
+		<echo message="* Project: ${ant.project.name}"/>
+		<echo message="* Version: ${build.version}"/>
+		<echo message="************************"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${build.local}" failonerror="no"/>
+		<delete dir="${dist.local}" failonerror="no"/>
+	</target>
+
+	<target name="build" depends="init">
+		<!-- Create build file structure -->
+		<mkdir dir="${build.local}"/>
+
+		<javac debug="${java.debug}" destdir="${build.local}" debuglevel="lines,vars,source" target="1.5" nowarn="yes" optimize="on">
+			<src path="${src.home}"/>
+			<classpath refid="build.classpath" />
+		</javac>
+
+		<copy todir="${build.local}">
+			<fileset dir="${src.home}" includes="*.properties"/>
+			<fileset dir="${res.home}" includes="**"/>
+		</copy>
+		
+		<mkdir dir="${dist.local}"/>
+		
+		<!-- Package jar file for client -->
+		<jar jarfile="${dist.local}/${dist.file}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Version" value="${build.version}"/>
+				<attribute name="Build-Date" value="${build.dstamp}"/>
+			</manifest>
+			<fileset dir="${build.local}">
+				<patternset refid="dest.exclude" />
+				<include name="**"/>
+				<exclude name="test/**"/>
+				<exclude name="*.exe"/>
+				<exclude name="config.properties"/>
+			</fileset>
+		</jar>
+		
+		<copy todir="${dist.local}">
+			<fileset dir="res" includes="*.bat"/>
+			<fileset dir="res" includes="*.sh"/>
+			<fileset dir="res" includes="*.jpg"/>
+			<fileset dir="res" includes="*.properties"/>
+		</copy>
+		
+		<copy todir="${dist.local}/lib">
+			<fileset dir="lib" includes="*.jar"/>
+		</copy>
+	</target>
+	
+	<target name="synchronize" depends="build">
+		<copy todir="../Gladiator/WebRoot/WEB-INF/lib">
+			<fileset dir="lib" includes="*.jar"/>
+			<fileset dir="${dist.local}" includes="*.jar"/>
+		</copy>
+	</target>
+</project>

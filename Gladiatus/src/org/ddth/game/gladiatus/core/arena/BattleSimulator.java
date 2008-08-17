@@ -5,19 +5,11 @@ import org.ddth.game.gladiatus.support.maths.Range;
 
 public class BattleSimulator {
 
-	public static void main(String[] args) {
-		Character player1 = createPlayer1();
-		Character player2 = createPlayer2();
-		for (int i = 0; i < 10; i++) {
-			simulate(player1, player2);
-		}
-	}
-
-	private static void simulate(Character player1, Character player2) {
+	public static int simulate(Character player1, Character player2, int times) {
 		Battle battle = new BattleV033(player1, player2);
 		int win = 0;
 		int draw = 0;
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < times; i++) {
 			battle.fight();
 			int health1 = battle.getGladiator1().getHealth();
 			int health2 = battle.getGladiator2().getHealth();
@@ -28,11 +20,12 @@ public class BattleSimulator {
 				draw++;
 			}
 		}
-		System.out.println("Player 1 [" + battle.getGladiator1() + "]");
-		System.out.println("Player 2 [" + battle.getGladiator2() + "]");
-		System.out.println("=> Player 1 won: " + win + " times - Draw: " + draw + " times");
+		//System.out.println("Player 1 [" + battle.getGladiator1() + "]");
+		//System.out.println("Player 2 [" + battle.getGladiator2() + "]");
+		//System.out.println("=> Player 1 won: " + win + " times - Draw: " + draw + " times");
+		return win;
 	}
-
+	
 	private static Character createPlayer1() {
 		Character character = new Character("instcode");
 		character.setName("instcode");
@@ -59,5 +52,13 @@ public class BattleSimulator {
 		character.setSkill(50);
 		character.setDamage(new Range(20, 30));
 		return character;
+	}
+	
+	public static void main(String[] args) {
+		Character player1 = createPlayer1();
+		Character player2 = createPlayer2();
+		for (int i = 0; i < 10; i++) {
+			simulate(player1, player2, 500);
+		}
 	}
 }
