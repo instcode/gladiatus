@@ -2,8 +2,7 @@
 // @name           Gladiatus Helper
 // @namespace      DDTH
 // @description    Find your Gladiatus experience more exciting with Gladiatus Helper
-// @include        *.gladiatus.com/*
-// @include        *.gladiatus.vn/*
+// @include        *.gladiatus.*
 // ==/UserScript==
 
 /**
@@ -217,7 +216,7 @@ function main() {
 	getMyStatusAndCheckOpponentsOnPage();
 	displayWorkStatus();
 	displayQuestStatus();
-	//displayAuctionStatus();
+	displayAuctionStatus();
 }
 /*********** COMMON FUNCTIONS ***********/
 
@@ -317,28 +316,28 @@ function simulate(index, objOpponent) {
 	debug('Simulating fight against ['+stats[index][statsIndexCharname]+']');
 
 	var nSims = 500;
-	/*
-	data = "rema=rema&remd=remd&aname=a&dname=d";
-	data += "&levela=" + stats[0][statsIndexLevel]+"&leveld=" + stats[index][statsIndexLevel];
-	data += "&skilla=" + stats[0][statsIndexSkill]+"&skilld=" + stats[index][statsIndexSkill];
-	data += "&agilitya=" + stats[0][statsIndexAgility]+"&agilityd=" + stats[index][statsIndexAgility];
-	data += "&charismaa=" + stats[0][statsIndexCharisma]+"&charismad=" + stats[index][statsIndexCharisma];
-	data += "&armoura=" + stats[0][statsIndexArmour]+"&armourd=" + stats[index][statsIndexArmour];
-	data += "&damagea=" + stats[0][statsIndexDamage1]+"&damaged=" + stats[index][statsIndexDamage1];
-	data += "&damagema=" + stats[0][statsIndexDamage2]+"&damagemd=" + stats[index][statsIndexDamage2];
-	data += "&sims=" + nSims + "&submit=Simulate";
-	*/
+	//*
+	data = "count=" + nSims + "&";
+	data += "&level1=" + stats[0][statsIndexLevel]+"&level2=" + stats[index][statsIndexLevel];
+	data += "&skill1=" + stats[0][statsIndexSkill]+"&skill2=" + stats[index][statsIndexSkill];
+	data += "&agility1=" + stats[0][statsIndexAgility]+"&agility2=" + stats[index][statsIndexAgility];
+	data += "&charisma1=" + stats[0][statsIndexCharisma]+"&charisma2=" + stats[index][statsIndexCharisma];
+	data += "&armour1=" + stats[0][statsIndexArmour]+"&armour2=" + stats[index][statsIndexArmour];
+	data += "&damage11=" + stats[0][statsIndexDamage1]+"&damage12=" + stats[index][statsIndexDamage1];
+	data += "&damage21=" + stats[0][statsIndexDamage2]+"&damage22=" + stats[index][statsIndexDamage2];
+	data += "&submit=Simulate";
+	//*/
 	
-	/*
+	//*
     GM_xmlhttpRequest({
 		method: "POST",
-		url: 'http://www.gladiatustools.com/calc.php',
+		url: 'http://gladiatus-helper.appspot.com/simulate',
 		headers: {'Content-type':'application/x-www-form-urlencoded'},
 		data: encodeURI(data),
 		onload: function(responseDetails) {
 			pulled = document.createElement('div');
 			pulled.innerHTML = responseDetails.responseText;
-			var regexp = /a.*?won a total of (\d+)/;
+			var regexp = /Win: (\d+)/;
 			var result = responseDetails.responseText.match(regexp);
 			if ( result.length > 1 ) {
 				objOpponent.parentNode.appendChild(document.createTextNode(' '));
@@ -362,11 +361,11 @@ function simulate(index, objOpponent) {
 			}
 		}
 	});
-	*/
+	//*/
 	objOpponent.parentNode.appendChild(document.createTextNode(' '));
 	var chanceToWin = '---';
 	var color = '#000000';
-	/*
+	//*
 	if ( chanceToWin >= 90 ) {
 		color = '#009010';
 	} else if ( chanceToWin >= 75 ) {
@@ -374,7 +373,7 @@ function simulate(index, objOpponent) {
 	} else if ( chanceToWin < 60 ) {
 		color = '#ff0000';
 	}
-	*/
+	//*/
 	regexp = /p=(\d+)/;
 	result = objOpponent.href.match(regexp);
 	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
