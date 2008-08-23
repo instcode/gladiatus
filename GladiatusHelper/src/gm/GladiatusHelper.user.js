@@ -356,31 +356,11 @@ function simulate(index, objOpponent) {
 				var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
 				var el = document.createElement('a');
 				el.href = urlMucNo;
-				el.innerHTML = '<small><font color='+color+'>(Lvl ' +stats[index][statsIndexLevel] + '/' + chanceToWin+'%)</font></small>';
+				el.innerHTML = '<small><font color='+color+'>(HP ' + stats[index][statsIndexHP] + '/' + chanceToWin+'%)</font></small>';
 				objOpponent.parentNode.appendChild(el);
 			}
 		}
 	});
-	//*/
-	objOpponent.parentNode.appendChild(document.createTextNode(' '));
-	var chanceToWin = '---';
-	var color = '#000000';
-	//*
-	if ( chanceToWin >= 90 ) {
-		color = '#009010';
-	} else if ( chanceToWin >= 75 ) {
-		color = '#0000ff';
-	} else if ( chanceToWin < 60 ) {
-		color = '#ff0000';
-	}
-	//*/
-	regexp = /p=(\d+)/;
-	result = objOpponent.href.match(regexp);
-	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
-	var el = document.createElement('a');
-	el.href = urlMucNo;
-	el.innerHTML = '<small><font color='+color+'>(Lvl ' +stats[index][statsIndexLevel] + '/' + chanceToWin+'%)</font></small>';
-	objOpponent.parentNode.appendChild(el);
 }
 /*********** ARENA HELPER ***********/
 
