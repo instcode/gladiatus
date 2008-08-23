@@ -581,11 +581,11 @@ const auctionStatusMedium    = 'Medium';
 const auctionStatusLong      = 'Long';
 const auctionStatusVeryLong  = 'Very Long';
 
-const auctionStatusSearchVS = new Array(/>Very Short</i, /R?t ng?n/i);
-const auctionStatusSearchS  = new Array(/>Short</i     , /Ng?n h?n/i);
-const auctionStatusSearchM  = new Array(/>Medium</i    , /Trung h?n/i);
-const auctionStatusSearchL  = new Array(/>Long</i      , /D�i h?n/i);
-const auctionStatusSearchVL = new Array(/>Very Long</i , /R?t l�u/i);
+const auctionStatusSearchVS = new Array(/>Very Short</i, /Rất ngắn/i);
+const auctionStatusSearchS  = new Array(/>Short</i     , /Ngắn hạn/i);
+const auctionStatusSearchM  = new Array(/>Medium</i    , /Trung hạn/i);
+const auctionStatusSearchL  = new Array(/>Long</i      , /Dài hạn/i);
+const auctionStatusSearchVL = new Array(/>Very Long</i , /Rất lâu/i);
 
 const auctionTimeVS =  30*60;
 const auctionTimeS  =  90*60 + auctionTimeVS;
@@ -714,8 +714,5 @@ function timerAuction() {
 	if ( r1 || r2 ) {
 		setTimeout(timerAuction, 999);
 	}
-	//if ( !(r1 && r2) ) {
-	//	displayAuctionStatus();
-	//}
 }
 /*********** AUCTION HELPER ***********/
