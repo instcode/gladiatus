@@ -356,7 +356,7 @@ function simulate(index, objOpponent) {
 				var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
 				var el = document.createElement('a');
 				el.href = urlMucNo;
-				el.innerHTML = '<small><font color='+color+'>(HP ' + stats[index][statsIndexHP] + '/' + chanceToWin+'%)</font></small>';
+				el.innerHTML = '<small><font color='+color+'>(Lvl ' +stats[index][statsIndexLevel] + '/HP ' + stats[index][statsIndexHP] + '/' + chanceToWin+'%)</font></small>';
 				objOpponent.parentNode.appendChild(el);
 			}
 		}
