@@ -12,10 +12,25 @@
       <blockquote>{{ greeting.content|escape }}</blockquote>
     {% endfor %}
 
-    <form action="/sign" method="post">
-      <div><textarea name="content" rows="3" cols="60"></textarea></div>
-      <div><input type="submit" value="Sign Guestbook"></div>
-    </form>
+    <form action="/simulate" method="post">
+		<div>Count<input type="text" name="count" value="1000"></input></div>
+		<div>Level<input type="text" name="level1" value="0"></input></div>
+		<div>Agility<input type="text" name="agility1" value="30"></input></div>
+		<div>Armour<input type="text" name="armour1" value="700"></input></div>
+		<div>Charisma<input type="text" name="charisma1" value="45"></input></div>
+		<div>Skill<input type="text" name="skill1" value="45"></input></div>
+		<div>Damage Min<input type="text" name="damage11" value="34"></input></div>
+		<div>Damage Max<input type="text" name="damage21" value="40"></input></div>
+		<div>Vs.</div>
+		<div>Level<input type="text" name="level2" value="0"></input></div>
+		<div>Agility<input type="text" name="agility2" value="76"></input></div>
+		<div>Armour<input type="text" name="armour2" value="1000"></input></div>
+		<div>Charisma<input type="text" name="charisma2" value="34"></input></div>
+		<div>Skill<input type="text" name="skill2" value="67"></input></div>
+		<div>Damage Min<input type="text" name="damage12" value="23"></input></div>
+		<div>Damage Max<input type="text" name="damage22" value="32"></input></div>
+		<div><input type="submit" value="Simulate"></div>
+	</form>
     <a href="{{ url }}">{{ url_linktext }}</a>
   </body>
 </html>
