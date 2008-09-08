@@ -39,7 +39,9 @@ class AuctionWatcher(webapp.RequestHandler):
 class Simulator(webapp.RequestHandler):
     def populate(self, player):
         try:
+            id = self.request.get('gladiator' + player, default_value = 'gladiator');
             level = int(self.request.get('level' + player));
+            hp = int(self.request.get('hitpoint' + player, default_value = '1000'));
             agility = int(self.request.get('agility' + player));
             armor = int(self.request.get('armour' + player));
             charisma = int(self.request.get('charisma' + player));
@@ -47,8 +49,7 @@ class Simulator(webapp.RequestHandler):
             damage = [int(self.request.get('damage1' + player)), int(self.request.get('damage2' + player))];
         except:
             pass
-        
-        character = Character('gladiator', 0, 'gladiator', 0, skill, agility, 0, charisma, armor, 0, damage);
+        character = Character(id, id, level, hp, 0, 0, skill, agility, 0, charisma, armor, 0, damage);
         
         return character;
     
@@ -58,7 +59,7 @@ class Simulator(webapp.RequestHandler):
         challenger = self.populate('1');
         defender = self.populate('2');
         result = simulate(challenger, defender, count);
-        self.response.out.write('Win: ' + str(result[0]));
+        self.response.out.write(str(result[0]) + '|' + str(result[1]) + '|' + str(result[2]));
         
 application = webapp.WSGIApplication(
                     [

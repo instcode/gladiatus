@@ -3,7 +3,7 @@ from org.ddth.game.gladiatus.core.Gladiatus import Character
     
 class Gladiator:
     def __init__(self):
-        self.health = 0;
+        self.hp = 0;
         self.damage = [0, 0];
         self.chanceToHit = 0;
         self.chanceToDoubleHit = 0;
@@ -11,6 +11,8 @@ class Gladiator:
 class Battle:
 
     def __init__(self, challenger, defender):
+        self.challenger = challenger;
+        self.defender = defender;
         self.gladiator1 = self.createGladiator(challenger, defender);
         self.gladiator2 = self.createGladiator(defender, challenger);
 
@@ -37,14 +39,35 @@ class Battle:
 
 class BattleV033(Battle):
     def fight(self):
-        self.gladiator1.health = 10000;
-        self.gladiator2.health = 10000;
+        self.gladiator1.hp = self.challenger.hp;
+        self.gladiator2.hp = self.defender.hp;
+        statistic = [0, 0, 0];
         # A battle might take 8-14 turns in 3 rounds :-)
         turn = 8 + randint(0, 6);
+        attacker = self.gladiator1;
+        defender = self.gladiator2;
         while (turn > 0):
-            self.turn(self.gladiator1, self.gladiator2);
-            self.turn(self.gladiator2, self.gladiator1);
+            self.turn(attacker, defender);
+            statistic[0] = self.check(attacker, defender);
+            if (statistic[0] != 0):
+                break;
+            attacker, defender = defender, attacker;
             turn -= 1;
+
+        statistic[1] = self.defender.hp - self.gladiator2.hp;
+        statistic[2] = self.challenger.hp - self.gladiator1.hp;
+        if (statistic[0] == 0 and statistic[1] < statistic[2]):
+            statistic[0] = -1;
+        elif (statistic[0] == 0 and statistic[1] > statistic[2]):
+            statistic[0] = 1;
+        return tuple(statistic);
+
+    def check(self, attacker, defender):
+        if (defender.hp < 25):
+            if (attacker == self.gladiator1):
+                return 1;
+            return -1;
+        return 0;
 
     def turn(self, attacker, defender):
         self.attack(attacker, defender);
@@ -59,23 +82,26 @@ class BattleV033(Battle):
         if (probability <= attacker.chanceToHit):
             damage = attacker.damage;
             hitpoints = damage[0] + randint(0, damage[1]);
-            defender.health = defender.health - hitpoints;
+            defender.hp = defender.hp - hitpoints;
 
 def simulate(challenger, defender, count):
-    win = 0;
-    draw = 0
     battle = BattleV033(challenger, defender);
-    while (count > 0):
-        battle.fight();
-        if (battle.gladiator1.health > battle.gladiator2.health):
+    win = 0;
+    damage_dealt = 0;
+    damage_received = 1;
+    step = count;
+    while (step > 0):
+        statistic = battle.fight();
+        if (statistic[0] > 0):
             win += 1;
-        elif (battle.gladiator1.health == battle.gladiator2.health):
-            draw += 1;
-        count -= 1;
-    return (win, draw);
+        damage_dealt += statistic[1];
+        damage_received += statistic[2];
+        step -= 1;
+    return (win, int(damage_dealt / count), int(damage_received / count));
 
 if __name__ == "__main__":
-    challenger = Character("instcode", 17, "instcode", 40, 60, 50, 40, 45, 700, 0, [40, 45]);
-    defender = Character("gladiator", 17, "gladiator", 40, 60, 50, 40, 45, 700, 0, [30, 35]);
+    id, name, level, hp, xp, strength, skill, agility, constitution, charisma, armor, intelligent, damage
+    challenger = Character("instcode", "instcode", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [40, 45]);
+    defender = Character("gladiator", "gladiator", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [30, 35]);
     win = simulate(challenger, defender);
     print win;

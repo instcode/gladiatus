@@ -1,9 +1,11 @@
 
 class Character:
-    def __init__(self, id, level, name, strength, skill, agility, constitution, charisma, armor, intelligent, damage):
+    def __init__(self, id, name, level, hp, xp, strength, skill, agility, constitution, charisma, armor, intelligent, damage):
         self.id = id;
-        self.level = level;
         self.name = name;
+        self.level = level;
+        self.hp = hp;
+        self.xp = xp;
         self.strength = strength;
         self.skill = skill;
         self.agility = agility;
