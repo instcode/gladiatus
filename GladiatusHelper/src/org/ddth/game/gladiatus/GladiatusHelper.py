@@ -41,7 +41,7 @@ class Simulator(webapp.RequestHandler):
         try:
             id = self.request.get('gladiator' + player, default_value = 'gladiator');
             level = int(self.request.get('level' + player));
-            hp = int(self.request.get('hitpoint' + player, default_value = '1000'));
+            hp = int(self.request.get('hitpoint' + player, default_value = '10000'));
             agility = int(self.request.get('agility' + player));
             armor = int(self.request.get('armour' + player));
             charisma = int(self.request.get('charisma' + player));
@@ -59,7 +59,7 @@ class Simulator(webapp.RequestHandler):
         challenger = self.populate('1');
         defender = self.populate('2');
         result = simulate(challenger, defender, count);
-        self.response.out.write(str(result[0]) + '|' + str(result[1]) + '|' + str(result[2]));
+        self.response.out.write('%d|%d|%d' % result);
         
 application = webapp.WSGIApplication(
                     [

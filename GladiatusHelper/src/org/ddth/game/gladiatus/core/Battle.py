@@ -43,7 +43,7 @@ class BattleV033(Battle):
         self.gladiator2.hp = self.defender.hp;
         statistic = [0, 0, 0];
         # A battle might take 8-14 turns in 3 rounds :-)
-        turn = 8 + randint(0, 6);
+        turn = 16 + randint(0, 12);
         attacker = self.gladiator1;
         defender = self.gladiator2;
         while (turn > 0):
@@ -100,7 +100,6 @@ def simulate(challenger, defender, count):
     return (win, int(damage_dealt / count), int(damage_received / count));
 
 if __name__ == "__main__":
-    id, name, level, hp, xp, strength, skill, agility, constitution, charisma, armor, intelligent, damage
     challenger = Character("instcode", "instcode", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [40, 45]);
     defender = Character("gladiator", "gladiator", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [30, 35]);
     win = simulate(challenger, defender);
