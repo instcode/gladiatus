@@ -95,6 +95,7 @@ function questGetReward(divQuest) {
 		var td = tag.snapshotItem(0);
 		removeChildsByTagName(td, "script");
 		removeChildsByTagName(td, "img");
+		removeChildsByTagName(td, "div[@id='reward']");
 		return td.innerHTML;
 	} else {
 		return '';
