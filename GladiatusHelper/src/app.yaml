@@ -5,9 +5,15 @@ api_version: 1
 
 handlers:
 
-- url: /stylesheets
-  static_dir: stylesheets
+- url: /css
+  static_dir: html/css
 
+- url: /js
+  static_dir: html/js
+  
+- url: /images
+  static_dir: html/images
+  
 - url: /gm
   static_dir: gm
 

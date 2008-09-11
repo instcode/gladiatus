@@ -10,10 +10,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from org.ddth.game.gladiatus.core.Gladiatus import Character
 from org.ddth.game.gladiatus.core.Battle import simulate
 
-class Greeting(db.Model):
-    author = db.UserProperty()
-    content = db.StringProperty(multiline=True)
-    date = db.DateTimeProperty(auto_now_add=True)
+TEMPLATE_DIRS = os.path.join(os.path.dirname(__file__), '../../../../html');
 
 class AuctionWatcher(webapp.RequestHandler):
     def get(self):
@@ -33,7 +30,7 @@ class AuctionWatcher(webapp.RequestHandler):
           'url': url,
           'url_linktext': url_linktext,
         }
-        path = os.path.join(os.path.dirname(__file__), '../../../../index.html')
+        path = os.path.join(TEMPLATE_DIRS, 'index.html')
         self.response.out.write(template.render(path, template_values))
 
 class Simulator(webapp.RequestHandler):
@@ -48,6 +45,14 @@ class Simulator(webapp.RequestHandler):
             skill = int(self.request.get('skill' + player));
             damage = [int(self.request.get('damage1' + player)), int(self.request.get('damage2' + player))];
         except:
+            id = "gladiator";
+            level = 0;
+            hp = 10000;
+            agility = 0;
+            armor = 0;
+            charisma = 0;
+            skill = 0;
+            damage = [0, 2];
             pass
         character = Character(id, id, level, hp, 0, 0, skill, agility, 0, charisma, armor, 0, damage);
         

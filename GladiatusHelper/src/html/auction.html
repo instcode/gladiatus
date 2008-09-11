@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+	<title>{{title}}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="css/global.css" type="text/css">
+	<script src="js/jquery-latest.js" type="text/javascript" language="javascript"></script>
+	<script src="js/functions.js" type="text/javascript" language="javascript"></script>
+</head>
+<body>
+<table border="0" cellpadding="8" cellspacing="0" width="100%">
+	<center><h1>{{title}}</h1></center>
+	<h3 align="right">Last report: {{time}}</h3>
+	<tbody>
+		<tr>
+			<div style="left: 909px; top: 10px; visibility: hidden;" class="dirs ydsf" id="ihAge">
+				<div class="inner">
+					Auction Watcher
+				</div>
+			</div>
+			<table id="serps" style="margin-left: 0px;" class="forumline" cellpadding="6" cellspacing="1" width="100%">
+				<tbody>
+					<tr align="center">
+						<td class="ihHead" onmouseover="showTip('Age');" onmouseout="hideTip('Age');">Event</td>
+						<td class="ihHead">Location</td>
+						<td class="ihHead">Magnitude</td>
+						<td class="ihHead">Description</td>
+						<td class="ihHead">??</td>
+					</tr>
+					<tr class="hlRow" id="event_1" onclick="toggleEventView(1)" onmouseover="rowOver(1)" onmouseout="rowOut(1,'#cad9ea')">
+						<td class="row3">1</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+					</tr>
+					<tr style="display: none;" id="event_displacement_1">
+						<td colspan="5" bgcolor="#ececd9">
+						<table border="0" cellpadding="0" cellspacing="0" width="100%">
+							<tbody>
+								<tr>
+									<td width="10"></td>
+									<td style="border: 3px solid rgb(0, 51, 102);">
+										<iframe src="http://www.google.com" style="height: 0px;" id="event_detail_1"
+										frameborder="0" width="100%"></iframe></td>
+								</tr>
+							</tbody>
+						</table>
+						</td>
+					</tr>
+					<tr class="hlRow" id="event_2" onclick="toggleEventView(2)" onmouseover="rowOver(2)" onmouseout="rowOut(2,'#cad9ea')">
+						<td class="row3">2</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+						<td class="row3">Description</td>
+					</tr>
+					<tr style="display: none;" id="event_displacement_2">
+						<td colspan="5" bgcolor="#ececd9">
+						<table border="0" cellpadding="0" cellspacing="0" width="100%">
+							<tbody>
+								<tr>
+									<td width="10"></td>
+									<td style="border: 3px solid rgb(0, 51, 102);">
+										<iframe src="http://www.google.com" style="height: 0px;" id="event_detail_2"
+										frameborder="0" width="100%"></iframe></td>
+								</tr>
+							</tbody>
+						</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="row2" colspan="2" align="left">&nbsp;</td>
+						<td class="row2" colspan="3" align="right">&nbsp;</td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</body>
+</html>

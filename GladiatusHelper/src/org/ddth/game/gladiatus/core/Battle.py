@@ -56,10 +56,12 @@ class BattleV033(Battle):
 
         statistic[1] = self.defender.hp - self.gladiator2.hp;
         statistic[2] = self.challenger.hp - self.gladiator1.hp;
-        if (statistic[0] == 0 and statistic[1] < statistic[2]):
-            statistic[0] = -1;
-        elif (statistic[0] == 0 and statistic[1] > statistic[2]):
-            statistic[0] = 1;
+        if (statistic[0] == 0):
+            if (statistic[1] < statistic[2]):
+                statistic[0] = -1;
+            elif (statistic[1] > statistic[2]):
+                statistic[0] = 1;
+
         return tuple(statistic);
 
     def check(self, attacker, defender):
@@ -101,6 +103,9 @@ def simulate(challenger, defender, count):
 
 if __name__ == "__main__":
     challenger = Character("instcode", "instcode", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [40, 45]);
-    defender = Character("gladiator", "gladiator", 17, 1000, 0, 40, 60, 50, 40, 45, 700, 0, [30, 35]);
-    win = simulate(challenger, defender);
-    print win;
+    defender = Character("gladiator", "gladiator", 17, 1000, 0, 40, 60, 70, 40, 50, 1000, 0, [30, 35]);
+    i = 0;
+    while (i < 10):
+        win = simulate(challenger, defender, 1000);
+        print win;
+        i += 1;
