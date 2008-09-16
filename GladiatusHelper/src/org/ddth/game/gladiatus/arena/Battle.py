@@ -86,8 +86,60 @@ class BattleV033(Battle):
             hitpoints = damage[0] + randint(0, damage[1]);
             defender.hp = defender.hp - hitpoints;
 
-def simulate(challenger, defender, count):
-    battle = BattleV033(challenger, defender);
+class BattleV040(Battle):
+    def fight(self):
+        self.gladiator1.hp = self.challenger.hp;
+        self.gladiator2.hp = self.defender.hp;
+        statistic = [0, 0, 0];
+        # A battle might take 8-14 turns in 3 rounds :-)
+        turn = 16 + randint(0, 12);
+        attacker = self.gladiator1;
+        defender = self.gladiator2;
+        while (turn > 0):
+            self.turn(attacker, defender);
+            statistic[0] = self.check(attacker, defender);
+            if (statistic[0] != 0):
+                break;
+            attacker, defender = defender, attacker;
+            turn -= 1;
+
+        statistic[1] = self.defender.hp - self.gladiator2.hp;
+        statistic[2] = self.challenger.hp - self.gladiator1.hp;
+        if (statistic[0] == 0):
+            if (statistic[1] < statistic[2]):
+                statistic[0] = -1;
+            elif (statistic[1] > statistic[2]):
+                statistic[0] = 1;
+
+        return tuple(statistic);
+
+    def check(self, attacker, defender):
+        if (defender.hp < 25):
+            if (attacker == self.gladiator1):
+                return 1;
+            return -1;
+        return 0;
+
+    def turn(self, attacker, defender):
+        self.attack(attacker, defender);
+        # Probability to double hit
+        probability = randint(0, 100);
+        if (probability <= attacker.chanceToDoubleHit):
+            self.attack(attacker, defender);
+
+    def attack(self, attacker, defender):
+        probability = randint(0, 100);
+        # Probability to hit
+        if (probability <= attacker.chanceToHit):
+            damage = attacker.damage;
+            hitpoints = damage[0] + randint(0, damage[1]);
+            defender.hp = defender.hp - hitpoints;
+            
+def simulate(version, challenger, defender, count):
+    if (version == "0.3.3"):
+        battle = BattleV033(challenger, defender);
+    elif (version == "0.4.0"):
+        battle = BattleV040(challenger, defender);   
     win = 0;
     damage_dealt = 0;
     damage_received = 1;

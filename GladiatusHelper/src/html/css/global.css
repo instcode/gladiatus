@@ -1,160 +1,3 @@
-.dirs {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 2;
-	width: 350px;
-	visibility: hidden;
-}
-
-.dirs .inner {
-	padding: 8px;
-	text-align: left;
-	background-color: #FFFFE6;
-	border: 1px solid #000;
-}
-
-.ydsf {
-	display: block;
-	margin: 4px -4px -4px 4px;
-}
-
-/* ie6 ignores this selector */
-html>body .ydsf {
-	margin: 10px -10px -10px 10px;
-}
-
-/* shadow corners */
-.ydsf:before,.ydsf:after {
-	content: " ";
-	display: block;
-	width: 10px;
-	height: 10px;
-	background: inherit;
-}
-
-.ydsf:before {
-	position: absolute;
-	top: 0;
-	right: 0;
-	margin: -10px 0 0 auto;
-	background-position: right top;
-}
-
-.ydsf:after {
-	margin: -10px 0 0 -10px;
-	background-position: left bottom;
-}
-
-.ydsf .inner {
-	display: block;
-	position: relative;
-	overflow: hidden; /* prevents margin leakage from child elements */
-	left: -4px;
-	top: -4px;
-}
-
-/* ie6 ignores this selector */
-html>body .ydsf .inner {
-	left: -10px;
-	top: -10px;
-	margin: 0;
-}
-
-.hl {
-	font-weight: bold;
-}
-
-.ihHead {
-	color: #EDF6F9;
-	font-weight: bold;
-	background: #036;
-	text-align: center;
-	letter-spacing: 1px;
-}
-
-th.ihHead {
-	cursor: pointer;
-	_cursor: hand;
-}
-
-a.ihHead:link {
-	color: #EDF6F9;
-	font-weight: bold;
-}
-
-a.ihHead:visited {
-	color: #EDF6F9;
-	font-weight: bold;
-}
-
-a.ihHead:active {
-	color: #EDF6F9;
-	font-weight: bold;
-}
-
-a.ihHead:hover {
-	color: #EDF6F9;
-	font-weight: bold;
-	text-decoration: underline;
-}
-
-.ihLogo {
-	color: White;
-	background: #036;
-	font-weight: bold;
-	font-size: 40px;
-	letter-spacing: 1px;
-	text-align: right;
-	padding: 0;
-}
-
-.highlighttext {
-	background-color: yellow;
-	font-weight: bold;
-}
-
-.adHeadline {
-	font-weight: bold;
-}
-
-.fileRows {
-	border-bottom: 1px solid #bbb;
-}
-
-.fileRowsRight {
-	border-bottom: 1px solid #bbb;
-	text-align: right;
-	padding: 0 0 0 30px;
-}
-
-.releases {
-	border-bottom: 1px solid #004480;
-}
-
-.hlRow {
-	cursor: pointer;
-	_cursor: hand;
-}
-
-.pager td {
-	font-size: 12px;
-}
-
-.pager a,.pager a:visited {
-	border: 1px solid #069;
-	border-width: 0 0 1px 0;
-	margin: 0 2px;
-}
-
-.pager a:hover {
-	background: #eee;
-	text-decoration: none;
-}
-
-/* Based on the original Style Sheet for the fisubsilver v2 Theme for phpBB version 2+
-Edited by Daz  - http://www.forumimages.com */
-	/* The content of the posts (body of text) */
 body {
 	background: #ecf0f6;
 	color: #000;
@@ -168,264 +11,68 @@ body {
 	scrollbar-track-color: #efefef
 }
 
-/* General font families for common tags */
-font,th,td,p {
+font, th, td, p {
 	color: #000;
 	font: 11px Verdana, Arial, Helvetica, sans-serif
 }
 
-/* General page style. The scroll bar colours only visible in IE5.5+ */
-a:link,a:active,a:visited,a.postlink {
-	color: #069;
-	text-decoration: none
+#main {
+	width: 800;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
 }
 
-a:hover {
-	color: #dd6900;
-	text-decoration: underline
+#header {
+	width: 800px;
+	height: 50px;
 }
 
-/* Name of poster in viewmsg.php and viewtopic.php and other places */
-.name {
-	font-size: 11px;
-	font-weight: bold
+#content {
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
-/* Added for Mozilla - still need to look at the black background problem though */
-img,iframe {
-	border: 0
+#footer {
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
-hr {
-	border: 0 solid #fff;
-	border-top-width: 1px;
-	height: 0
+#events {
+	margin: 0 0 0 0px;
+	background: #FFFFFF none repeat scroll 0 0;
+	border: 1px solid #006699;
+	color: #000000;
 }
 
-ul {
-	margin-bottom: 2px
+#events .status_actions {
+	float: left;
+	vertical-align: middle;
 }
 
-/* Form elements */
-form {
-	display: inline
-}
-
-input {
-	margin-bottom: 2px;
-	margin-top: 2px;
-	text-indent: 2px
-}
-
-input,textarea,select {
-	border-color: #000;
+#events .clickable-row {
+	background: #cad9ea;
 	color: #000;
-	font-size: 11px
-}
-
-/* Fancy form styles for IE */
-input,textarea,select,input.button {
-	border-width: 1px;
-	font: normal 11px Verdana, Arial, Helvetica, sans-serif;
-}
-
-/* The buttons used for bbCode styling in message post */
-input.button {
-	border: 1px solid #000;
-	background: #fafafa;
-	color: #000
-}
-
-input.catbutton {
-	border: 1px solid #000;
-	background: #fafafa;
-	color: #000;
-	font-size: 10px
-}
-
-/* None-bold submit button */
-input.liteoption {
-	border: 1px solid #000;
-	background: #fafafa;
-	color: #000
-}
-
-/* The main submit button option */
-input.mainoption {
-	border: 1px solid #000;
-	background: #fafafa;
-	color: #000;
-	padding: 1px 3px;
-	font-weight: bold
-}
-
-.liteoption:hover,.mainoption:hover,.button:hover,.catbutton:hover {
-	background: #ECECD9;
+	text-align: center;
 	cursor: pointer;
 	_cursor: hand;
 }
 
-/* The text input fields background colour */
-input.post,textarea.post,select {
-	border: 1px solid #000;
-	background: #fafafa;
-	color: #000
-}
-
-/* Category gradients*/
-td.cat {
-	font-weight: bold;
-	letter-spacing: 1px;
-	color: #000;
-	background: #cad9ea;
-	height: 29px
-}
-
-/* Main table cell colours and backgrounds */
-td.row1 {
-	background: #eaedf4;
-	color: #000
-}
-
-td.row2 {
-	background: #d9e2ec;
-	color: #000
-}
-
-td.row3 {
-	background: #cad9ea;
-	color: #000
-}
-
-td.row4 {
-	background: #fafafa;
-	color: #000
-}
-
-td.row5 {
-	background: #D4E3D6;
-	color: #000
-}
-
-td.spacerow {
-	background: #cad9ea;
-	color: #000
-}
-
-/* Header cells - the blue and silver gradient backgrounds */
-th {
-	background: #036;
+#events .header {
 	color: #EDF6F9;
-	font-size: 11px;
 	font-weight: bold;
-	height: 28px;
-	white-space: nowrap;
-	text-align: center
+	background: #036;
+	text-align: center;
+	letter-spacing: 1px;
 }
 
-/* Code blocks */
-.code {
-	background: #fafafa;
-	border: 1px solid #d1d7dc;
-	color: #006600;
-	font: 11px Courier, "Courier New", sans-serif;
-	padding: 5px
-}
-
-/* This is for the error messages that pop up */
-.errorline {
-	background: #add8e6;
+#events .row {
+	background: #cad9ea;
 	color: #000;
-	border: 1px solid #069
+	text-align: center;
 }
 
-/* This is the border line & background colour round the entire page */
-.bodyline {
-	background: #fff;
-	color: #000;
-	border: 1px solid #98aab1
-}
-
-/* This is the outline round the main forum tables */
-.forumline {
-	background: #fff;
-	color: #000;
-	border: 1px solid #069
-}
-
-.forumline#serps {
-	margin: 0 0 0 11px
-}
-
-/* This is the line in the posting page which shows the rollover
-help line. This is actually a text box,but if set to be the same
-colour as the background no one will know;)*/
-.helpline {
+#events .status {
 	background: #d9e2ec;
-	border-style: none;
 	color: #000
-}
-
-/* The largest text used in the index page title and toptic title etc. */
-.maintitle,h1 {
-	font: bold 20px/ 120% "Trebuchet MS", Verdana, Arial, Helvetica,
-		sans-serif;
-	text-decoration: none
-}
-
-/* Used for the navigation text,(Page 1,2,3 etc) and the navigation bar when in a forum */
-.postreply {
-	font-size: 17px;
-	font-weight: bold;
-	letter-spacing: -1px
-}
-
-a.postreply,span.postreply a {
-	color: #dd6900;
-}
-
-a.postreply:visited,span.postreply a:visited {
-	color: #dd6900
-}
-
-a.postreply:hover,span.postreply a:hover {
-	color: #069
-}
-
-.nav {
-	font-size: 11px;
-	font-weight: bold
-}
-
-.postbody {
-	font: 12px/ 125% Verdana, Arial, Helvetica, sans-serif
-}
-
-/* Location,number of posts,post date etc */
-.postdetails {
-	color: #000;
-	font-size: 10px
-}
-
-/* Quote blocks */
-.quote {
-	background: #fafafa;
-	border: 1px solid #d1d7dc;
-	color: #444444;
-	font: 11px/ 125% Verdana, Arial, Helvetica, sans-serif
-}
-
-.subtitle,h2 {
-	color: #000;
-	font: bold 18px/ 180% "Trebuchet MS", Verdana, Arial, Helvetica,
-		sans-serif;
-	text-decoration: none
-}
-
-.row1 {
-	background: #d9e2ec;
-}
-
-.row2 {
-	background: #EAEDF4;
 }
