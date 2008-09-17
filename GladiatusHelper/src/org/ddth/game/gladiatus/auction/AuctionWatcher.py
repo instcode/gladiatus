@@ -9,7 +9,8 @@ from org.ddth.game.gladiatus import TEMPLATE_DIRS
 class AuctionWatcher(webapp.RequestHandler):
     def get(self):
         context = {
-            'url': 'http://localhost:8080',
+            'title': 'Auction Watcher',
+            'auction_items': ''
         }
         path = os.path.join(TEMPLATE_DIRS, 'auction.html')
         self.response.out.write(template.render(path, context))

@@ -1,10 +1,8 @@
-<html>
-<head>
-	<link type="text/css" rel="stylesheet" href="/css/global.css" />
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
+{{ block.super }}
 	<form action="/simulate.py" method="post">
-		<div>Count<input type="text" name="count" value="1000"></input></div>
+		<div>Count<input type="text" name="count" value="500"></input></div>
 		<div>Gladiator<input type="text" name="gladiator1" value="gladiator1"/></div>
 		<div>Level<input type="text" name="level1" value="0"/></div>
 		<div>HP<input type="text" name="hitpoint1" value="10000"/></div>
@@ -26,5 +24,4 @@
 		<div>Damage Max<input type="text" name="damage22" value="32"/></div>
 		<div><input type="submit" value="Simulate"/></div>
 	</form>
-</body>
-</html>
+{% endblock %}
