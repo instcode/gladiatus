@@ -100,6 +100,11 @@ function requestAuctionPage(){
 	});
 }
 
+function isStoreAuctionStatus() {
+	var cookieAutionTime = readCookie('auction_time');
+	return null != cookieAutionTime;
+}
+
 function displayAuctionRemainingTime() {
 	var cookieAuctionTime = readCookie("auction_time");
 	if (null != cookieAuctionTime) {
@@ -144,7 +149,7 @@ function processAuction(){
 	if (currentAuctionStatus == veryShortTimeStr) {
 		setTimeout(requestAuctionPage, 30 * 60 * 1000);
 		// Time change from short time to very sort time
-	    if (previousAuctionStatus == shortTimeStr) {
+	    if (previousAuctionStatus == shortTimeStr && !isStoreAuctionStatus) {
 			// Get current time and store in cookies
 			var newTime = new Date();
 			createCookie("auction_time", newTime.getTime(), 60);
