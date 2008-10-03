@@ -7,8 +7,10 @@
  *   2008.08.28
  *     - First version
  */
- 
+
 /*********** SETTING UP ***********/
+
+var LANG_HARD = "Khó";
 
 var timeRemainingQuest = 0;
 
@@ -30,12 +32,12 @@ function questDisplayQuestStatus() {
 		+ '<td align="right" style="border-bottom: 1px solid #c0c0c0;" id="tdQuestStatus">---</td></tr>';
 	str += '<tr><td colspan="2" id="tdQuestDesc" width="200">---</td></tr>';
 	str += '</table>';
-	
+
 	divQuestStatus.innerHTML = str;
-	
+
 	var questStatus = document.getElementById('tdQuestStatus');
 	var questDesc = document.getElementById('tdQuestDesc');
-	
+
 	GM_xmlhttpRequest({
 		method: "GET",
 		url: urlTavern,
@@ -51,6 +53,7 @@ function questDisplayQuestStatus() {
 				var result = pulled.innerHTML.match(regexp);
 				timeRemainingQuest = result[1];
 				timerQuest();
+				setAutoReceiveQuestTimer();
 			} else if ( responseDetails.responseText.indexOf("cancel") >= 0 ) {
 				//quest is undergoing
 				questStatus.innerHTML = 'Undergoing';
@@ -104,7 +107,7 @@ function questGetReward(divQuest) {
 
 function questGetTitle(divQuest) {
 	var ex = ".//h2";
-	var tag = document.evaluate( 
+	var tag = document.evaluate(
 		ex,
 		divQuest,
 		null,
@@ -127,3 +130,22 @@ function timerQuest() {
 		setTimeout(timerQuest, 999);
 	}
 }
+
+function setAutoReceiveQuestTimer() {
+	// kiem tra xem co cai timer chua
+	setTimeout(autoReceiveQuest, 999);
+}
+
+function autoReceiveQuest() {
+	GM_xmlhttpRequest({
+		method: "POST",
+		url: urlTavern,
+		headers: {
+			'Content-type': 'application/x-www-form-urlencoded'
+		},
+		data: {
+			dif3: encodeURI(LANG_HARD)
+		}
+	});
+}
+autoReceiveQuest();
