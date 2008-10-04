@@ -229,7 +229,7 @@ function removeCurrentNode(childNode) {
  */
 function convertStringToTimeMilis(strTime) {
 //	timeAmount = 0;
-//	timeValues = strTime.split(':');
+	timeValues = strTime.split(':');
 //
 //	if (timeValues.length == 3) {
 //		timeAmount = (parseInt(timeValues[0]) * 3600 + parseInt(timeValues[1])
