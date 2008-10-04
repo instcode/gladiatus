@@ -5,15 +5,15 @@
  * @copyright (C) 2008, DDTH.ORG
  * @history
  *   2008.08.28
- *     - First version 
+ *     - First version
  */
- 
+
 /*********** SETTING UP ***********/
 var STATUS = 'Gladiatus Helper v0.3.3.5<br>by NGUYEN, Ba Thanh';
 var divPanel = document.createElement('div');
 divPanel.setAttribute('id', 'gladiatusPanel');
 divPanel.setAttribute('style', 'font-size:10px; background:#d0d0ff; border:solid black 1px; padding:4px; position: absolute; top: 0px');
-divPanel.innerHTML = STATUS + 
+divPanel.innerHTML = STATUS +
 	'<table id="tblCharacter" style="font-size:10px;" border="0" cellpadding="0" cellspacing="0">' +
 		'<tr>' +
 			'<td valign="top"><div id="panelCharStats"></div></td>' +
@@ -22,7 +22,7 @@ divPanel.innerHTML = STATUS +
 				'<div id="panelWorkStatus"></div>' +
 				'<div style="height: 4px"></div>' +
 				'<div id="panelAuctionStatus"></div>' +
-			'</td>' + 
+			'</td>' +
 		'</tr>' +
 		'<tr><td colspan="3">&nbsp;</td></tr>'+
 		'<tr><td colspan="3" style="width: 100%"><div style="width: 100%" id="panelQuestStatus"></div></td></tr>'+
@@ -77,7 +77,7 @@ function readCookie(name) {
     var ca = document.cookie.split(';');
     for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0) == ' ') 
+        while (c.charAt(0) == ' ')
             c = c.substring(1, c.length);
         if (c.indexOf(nameEQ) == 0) {
 			return c.substring(nameEQ.length, c.length);
@@ -133,7 +133,7 @@ function updateTimer(div, timeRemaining) {
 
 function getRemainingTimeObj(id, div) {
 	var query = '//div[@id="'+id+'"]';
-	return document.evaluate( 
+	return document.evaluate(
 		query,
 		div,
 		null,
@@ -152,7 +152,7 @@ function getRemainingTimeStr(id, div) {
 }
 
 function xpathQuery(query, obj) {
-	return document.evaluate( 
+	return document.evaluate(
 		query,
 		obj,
 		null,
@@ -221,4 +221,22 @@ function removeChildsByTagName(parentNode, childTagName) {
 function removeCurrentNode(childNode) {
 	childNode.parentNode.removeChild(childNode);
 }
+
+/**
+ * Convert time string hh:MM:ss to miliseconds
+ * @param {Object} strTime
+ * @return long
+ */
+function convertStringToTimeMilis(strTime) {
+//	timeAmount = 0;
+//	timeValues = strTime.split(':');
+//
+//	if (timeValues.length == 3) {
+//		timeAmount = (parseInt(timeValues[0]) * 3600 + parseInt(timeValues[1])
+//				 * 60 + parseInt(timeValues[2])) * 1000;
+//	}
+//
+//	return timeAmount;
+}
+
 /*********** COMMON FUNCTIONS ***********/
