@@ -224,12 +224,12 @@ function removeCurrentNode(childNode) {
 
 /**
  * Convert time string hh:MM:ss to miliseconds
- * @param {Object} strTime
+ * @param {String} strTime
  * @return long
  */
 function convertStringToTimeMilis(strTime) {
-	timeAmount = 0;
-	timeValues = strTime.split(':');
+	var timeAmount = 0;
+	var timeValues = strTime.split(':');
 //
 //	if (timeValues.length == 3) {
 //		timeAmount = (parseInt(timeValues[0], 10) * 3600 + parseInt(timeValues[1], 10) * 60 + parseInt(timeValues[2])) * 1000;
