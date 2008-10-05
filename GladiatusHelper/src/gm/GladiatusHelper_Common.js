@@ -227,15 +227,15 @@ function removeCurrentNode(childNode) {
  * @param {String} strTime
  * @return long
  */
-function convertStringToTimeMilis(strTime) {
+//function convertStringToTimeMilis(strTime) {
 //	var timeAmount = 0;
 //	var timeValues = strTime.split(':');
 //
 //	if (timeValues.length == 3) {
 //		timeAmount = (parseInt(timeValues[0], 10) * 3600 + parseInt(timeValues[1], 10) * 60 + parseInt(timeValues[2])) * 1000;
 //	}
-
-	return timeAmount;
-}
+//
+//	return timeAmount;
+//}
 
 /*********** COMMON FUNCTIONS ***********/
