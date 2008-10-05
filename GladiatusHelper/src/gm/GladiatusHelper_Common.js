@@ -228,7 +228,7 @@ function removeCurrentNode(childNode) {
  * @return long
  */
 function convertStringToTimeMilis(strTime) {
-	var timeAmount = 0;
+//	var timeAmount = 0;
 //	var timeValues = strTime.split(':');
 //
 //	if (timeValues.length == 3) {
