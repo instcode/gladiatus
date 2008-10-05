@@ -10,8 +10,6 @@
 
 /*********** SETTING UP ***********/
 
-var LANG_HARD = "Khó";
-
 var timeRemainingQuest = 0;
 
 var divQuestStatus = document.getElementById('panelQuestStatus');
@@ -53,7 +51,6 @@ function questDisplayQuestStatus() {
 				var result = pulled.innerHTML.match(regexp);
 				timeRemainingQuest = result[1];
 				timerQuest();
-				setAutoReceiveQuestTimer();
 			} else if ( responseDetails.responseText.indexOf("cancel") >= 0 ) {
 				//quest is undergoing
 				questStatus.innerHTML = 'Undergoing';
@@ -130,22 +127,3 @@ function timerQuest() {
 		setTimeout(timerQuest, 999);
 	}
 }
-
-function setAutoReceiveQuestTimer() {
-	// kiem tra xem co cai timer chua
-	setTimeout(autoReceiveQuest, 999);
-}
-
-function autoReceiveQuest() {
-	GM_xmlhttpRequest({
-		method: "POST",
-		url: urlTavern,
-		headers: {
-			'Content-type': 'application/x-www-form-urlencoded'
-		},
-		data: {
-			dif3: encodeURI(LANG_HARD)
-		}
-	});
-}
-autoReceiveQuest();

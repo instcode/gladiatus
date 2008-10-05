@@ -207,7 +207,6 @@ function getDivAttribute(htmlObj, name, method, attrName) {
  * @return boolean
  */
 function removeChildsByTagName(parentNode, childTagName) {
-	childTags = xpathQuery(".//" + childTagName, parentNode);
 	if (childTags.snapshotLength) {
 		for (index = 0; index < childTags.snapshotLength; index++) {
 			removeCurrentNode(childTags.snapshotItem(index));
@@ -221,21 +220,5 @@ function removeChildsByTagName(parentNode, childTagName) {
 function removeCurrentNode(childNode) {
 	childNode.parentNode.removeChild(childNode);
 }
-
-/**
- * Convert time string hh:MM:ss to miliseconds
- * @param {String} strTime
- * @return long
- */
-//function convertStringToTimeMilis(strTime) {
-//	var timeAmount = 0;
-//	var timeValues = strTime.split(':');
-//
-//	if (timeValues.length == 3) {
-//		timeAmount = (parseInt(timeValues[0], 10) * 3600 + parseInt(timeValues[1], 10) * 60 + parseInt(timeValues[2])) * 1000;
-//	}
-//
-//	return timeAmount;
-//}
 
 /*********** COMMON FUNCTIONS ***********/
