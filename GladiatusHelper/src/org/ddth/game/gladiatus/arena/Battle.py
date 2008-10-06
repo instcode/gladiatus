@@ -114,7 +114,7 @@ class BattleV040(Battle):
         return tuple(statistic);
 
     def check(self, attacker, defender):
-        if (defender.hp < 25):
+        if (defender.hp < 1):
             if (attacker == self.gladiator1):
                 return 1;
             return -1;
