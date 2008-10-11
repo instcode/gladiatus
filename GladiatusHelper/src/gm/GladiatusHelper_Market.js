@@ -9,7 +9,7 @@
  */
 
 /** ********* SETTING UP ********** */
-const marketRegexp = /.ang s. d.ng: H.i ph.c (.*) m.ng s.ng/;
+const marketRegexp = /.ang s. d.ng: H.i ph.c (\d+) m.ng s.ng/;
 /** ********* SETTING UP ********** */
 
 function marketDisplayPriceRate() {
@@ -45,15 +45,15 @@ function marketDisplayPriceRate() {
 			if (id == ids[j]) {
 				var regexpResult = contents[j].match(marketRegexp);
 				var ratioText = '*';
-				if (regexpResult) {
+				if (regexpResult != null) {
 					var hp = regexpResult[1];
-					var ratios = (hp * 1) / (money * 1);
-					if (ratios > 4)
+					var ratios = (hp * 1) / (money * 1) + "";
+					if (ratios * 1 > 3.5)
 						ratioText = '<font color=red><b>' + ratios.substring(0, 5) + '</b></font>';
 					else
 						ratioText = ratios.substring(0, 5);
 				}
-				ratio.title = 'HP/Money';
+				ratio.title = 'Life/Money';
 				ratio.innerHTML = ratioText;
 				break;
 			}
