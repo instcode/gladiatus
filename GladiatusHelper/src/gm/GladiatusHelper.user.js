@@ -3,12 +3,12 @@
 // @namespace      http://www.ddth.org/
 // @description    Find your Gladiatus experience more exciting with Gladiatus Helper
 // @include        *.gladiatus.*
-// @exclude        *.gladiatus.*market*
 // @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Common.js
 // @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Arena.js
 // @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Work.js
 // @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Quest.js
 // @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Auction.js
+// @require        http://gladiatus-js.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Market.js
 // ==/UserScript==
 
 /**
@@ -53,8 +53,13 @@ if ( $CHECK_STATUS ) {
 }
 
 function main() {
-	arenaDisplayMyStatsAndCheckOpponents();
-	workDisplayWorkStatus();
-	questDisplayQuestStatus();
-	requestAuctionPage();
+	if (siteMod == 'market') {
+		marketDisplayPriceRate();
+	}
+	else {
+		arenaDisplayMyStatsAndCheckOpponents();
+		workDisplayWorkStatus();
+		questDisplayQuestStatus();
+		requestAuctionPage();
+	}
 }
