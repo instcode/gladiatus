@@ -33,7 +33,7 @@
  * v3.3.3 2008.08.10
  *   - timer on Arena
  *   - Auction Helper (beta)
- *   - Quest Helper: quest description, status and reward 
+ *   - Quest Helper: quest description, status and reward
  * v3.3.2 2008.08.09
  *   - refined information panel
  *   - auto-scroll panel (thanks to duongminhduc)
@@ -61,5 +61,6 @@ function main() {
 		workDisplayWorkStatus();
 		questDisplayQuestStatus();
 		requestAuctionPage();
+		setAutoReceiveQuestTimer();
 	}
 }

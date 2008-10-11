@@ -10,7 +10,11 @@
 
 /*********** SETTING UP ***********/
 
+var LANG_HARD = "Khó";
+
 var timeRemainingQuest = 0;
+
+var timeInterval = 0;
 
 var divQuestStatus = document.getElementById('panelQuestStatus');
 /*********** SETTING UP ***********/
@@ -51,6 +55,7 @@ function questDisplayQuestStatus() {
 				var result = pulled.innerHTML.match(regexp);
 				timeRemainingQuest = result[1];
 				timerQuest();
+				setAutoReceiveQuestTimer();
 			} else if ( responseDetails.responseText.indexOf("cancel") >= 0 ) {
 				//quest is undergoing
 				questStatus.innerHTML = 'Undergoing';
@@ -93,6 +98,7 @@ function questGetReward(divQuest) {
 		var table = tag.snapshotItem(2);
 		tag = xpathQuery(".//td", table);
 		var td = tag.snapshotItem(0);
+//		alert(td.innerHTML);
 		removeChildsByTagName(td, "script");
 		removeChildsByTagName(td, "img");
 		removeChildsByTagName(td, "div[@id='reward']");
@@ -126,4 +132,40 @@ function timerQuest() {
 	if ( updateTimer(div, timeRemainingQuest) ) {
 		setTimeout(timerQuest, 999);
 	}
+}
+
+function setAutoReceiveQuestTimer() {
+//	timeAmount = convertStringToTimeMilis(timeRemainingQuest);
+//	timeAmount = 5 * 1000 * 60;
+	timeInterval = 5 * 1000;
+	setTimeout(checkQuestRecAvailable, timeInterval);
+}
+
+function checkQuestRecAvailable() {
+	GM_xmlhttpRequest({
+		method: "GET",
+		url: urlTavern,
+		onload: function(responseDetails) {
+			var searchRegExp = /name="dif3"/;
+			if (responseDetails.search(searchRegExp) > 0) {
+				autoReceiveQuest();
+			} else {
+				setTimeout(checkQuestRecAvailable, timeInterval);
+			}
+		}
+	});
+}
+
+function autoReceiveQuest() {
+	strData = "dif3=" + LANG_HARD;
+	GM_xmlhttpRequest({
+		method: "POST",
+		url: urlTavern,
+		headers: {'Content-type':'application/x-www-form-urlencoded'},
+		data: encodeURI(strData),
+		onload: function() {
+			alert("Received quest");
+			window.reload();
+		}
+	});
 }
