@@ -3,12 +3,12 @@
 // @namespace      http://www.ddth.org/
 // @description    Find your Gladiatus experience more exciting with Gladiatus Helper
 // @include        *.gladiatus.*
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Common.js
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Arena.js
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Work.js
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Quest.js
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Auction.js
-// @require        http://gladiatus.googlecode.com/svn/trunk/gmscripts/GladiatusHelper_Market.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Common.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Arena.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Work.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Quest.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Auction.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Market.js
 // ==/UserScript==
 
 /**
