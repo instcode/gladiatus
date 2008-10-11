@@ -48,7 +48,7 @@ function marketDisplayPriceRate() {
 				if (regexpResult != null) {
 					var hp = regexpResult[1];
 					var ratios = (hp * 1) / (money * 1) + "";
-					if (ratios * 1 > 3.5)
+					if (ratios * 1 > 0.35)
 						ratioText = '<font color=red><b>' + ratios.substring(0, 5) + '</b></font>';
 					else
 						ratioText = ratios.substring(0, 5);
