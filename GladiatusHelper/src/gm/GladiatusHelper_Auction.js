@@ -100,11 +100,6 @@ function requestAuctionPage(){
 	});
 }
 
-function isStoreAuctionStatus() {
-	var cookieAutionTime = readCookie('auction_time');
-	return null != cookieAutionTime;
-}
-
 function displayAuctionRemainingTime() {
 	var cookieAuctionTime = readCookie("auction_time");
 	if (null != cookieAuctionTime) {
@@ -149,13 +144,24 @@ function processAuction(){
 	if (currentAuctionStatus == veryShortTimeStr) {
 		setTimeout(requestAuctionPage, 30 * 60 * 1000);
 		// Time change from short time to very sort time
-	    if (previousAuctionStatus == shortTimeStr && !isStoreAuctionStatus()) {
+	    if (previousAuctionStatus == shortTimeStr) {
 			// Get current time and store in cookies
 			var newTime = new Date();
-			createCookie("auction_time", newTime.getTime(), 60);
+			var cookieAutionTime = readCookie('auction_time');
+			var isRecentlyUpdated = false;
+			if (cookieAutionTime != null) {
+				timeRemainingAuction = calcRemainingTime(cookieAuctionTime, newTime.getTime());
+				if (timeRemainingAuction < 30*60 & timeRemainingAuction > 29*60 + 30) {
+					isRecentlyUpdated = true;
+				}
+			}
+			else {
+				createCookie("auction_time", newTime.getTime(), 60);
+			}
+			
 			result = 4;
-			if (1 == isAlert) {
-				alert("Bid time remaining in 30s");
+			if (1 == isAlert && !isRecentlyUpdated) {
+				alert("Bid time remaining in 30p");
 			}
 			window.location.reload();
 		} else {

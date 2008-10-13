@@ -207,6 +207,7 @@ function getDivAttribute(htmlObj, name, method, attrName) {
  * @return boolean
  */
 function removeChildsByTagName(parentNode, childTagName) {
+	childTags = xpathQuery(".//" + childTagName, parentNode);
 	if (childTags.snapshotLength) {
 		for (index = 0; index < childTags.snapshotLength; index++) {
 			removeCurrentNode(childTags.snapshotItem(index));

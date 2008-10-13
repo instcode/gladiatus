@@ -9,13 +9,8 @@
  */
 
 /*********** SETTING UP ***********/
-
-var LANG_HARD = "Khó";
-
 var timeRemainingQuest = 0;
-
 var timeInterval = 0;
-
 var divQuestStatus = document.getElementById('panelQuestStatus');
 /*********** SETTING UP ***********/
 
@@ -98,7 +93,6 @@ function questGetReward(divQuest) {
 		var table = tag.snapshotItem(2);
 		tag = xpathQuery(".//td", table);
 		var td = tag.snapshotItem(0);
-//		alert(td.innerHTML);
 		removeChildsByTagName(td, "script");
 		removeChildsByTagName(td, "img");
 		removeChildsByTagName(td, "div[@id='reward']");
@@ -135,8 +129,6 @@ function timerQuest() {
 }
 
 function setAutoReceiveQuestTimer() {
-//	timeAmount = convertStringToTimeMilis(timeRemainingQuest);
-//	timeAmount = 5 * 1000 * 60;
 	timeInterval = 5 * 1000;
 	setTimeout(checkQuestRecAvailable, timeInterval);
 }
@@ -146,9 +138,10 @@ function checkQuestRecAvailable() {
 		method: "GET",
 		url: urlTavern,
 		onload: function(responseDetails) {
-			var searchRegExp = /name="dif3"/;
-			if (responseDetails.search(searchRegExp) > 0) {
-				autoReceiveQuest();
+			var matchRegExp = /value="([^"]*)" name="dif3"/;
+			var group = responseDetails.match(matchRegExp);
+			if (group != null) {
+				autoReceiveQuest(group[1]);
 			} else {
 				setTimeout(checkQuestRecAvailable, timeInterval);
 			}
@@ -156,8 +149,8 @@ function checkQuestRecAvailable() {
 	});
 }
 
-function autoReceiveQuest() {
-	strData = "dif3=" + LANG_HARD;
+function autoReceiveQuest(quest) {
+	strData = "dif3=" + quest;
 	GM_xmlhttpRequest({
 		method: "POST",
 		url: urlTavern,
