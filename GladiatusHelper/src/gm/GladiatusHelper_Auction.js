@@ -155,7 +155,8 @@ function processAuction(){
 					isRecentlyUpdated = true;
 				}
 			}
-			else {
+
+			if (!isRecentlyUpdated) {
 				createCookie("auction_time", newTime.getTime(), 60);
 			}
 			
