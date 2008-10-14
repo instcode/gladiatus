@@ -15,6 +15,7 @@ GM_addStyle(<><![CDATA[
 .headerRes,#rubies{left:440px;}
 #txt_msg{position:absolute; width:100px; height:24px; left:590px; top:7px; margin-right:3px; color: #000; font-family:"Verdana", serif; font-weight: bold; font-size:0.6em;}
 ]]></>.toXMLString());
+
 var plugin = document.createElement("span");
 plugin.setAttribute('class','topmenuitem');
 plugin.setAttribute('style','margin-top:8px; font-size:12px');
