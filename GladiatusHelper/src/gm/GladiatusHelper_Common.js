@@ -9,7 +9,7 @@
  */
 
 /*********** SETTING UP ***********/
-var STATUS = 'Gladiatus Helper v0.3.3.5<br>by NGUYEN, Ba Thanh';
+var STATUS = 'Gladiatus Helper v0.3.3.5<br>';
 var divPanel = document.createElement('div');
 divPanel.setAttribute('id', 'gladiatusPanel');
 divPanel.setAttribute('style', 'font-size:10px; background:#d0d0ff; border:solid black 1px; padding:4px; position: absolute; top: 0px');
@@ -44,6 +44,7 @@ var urlTavern;
 var urlWork;
 var urlArena;
 var urlAuction;
+var urlSettings;
 
 var currentTime = new Date();
 
@@ -58,6 +59,7 @@ var urlWork = siteUrl + 'mod=work&sh='+secureHash;
 var urlTavern = siteUrl + 'mod=tavern&sh='+secureHash;
 var urlArena = siteUrl + 'mod=arena&sh='+secureHash;
 var urlAuction = siteUrl + 'mod=auction&sh='+secureHash;
+var urlSettings = siteUrl + 'mod=settings&sh='+secureHash;
 /*********** SETTING UP ***********/
 
 /*********** COMMON FUNCTIONS ***********/
