@@ -129,6 +129,10 @@ function updateTimer(div, timeRemaining) {
 			m = '0'+m;
 		}
 		div.innerHTML = ' '+h+':'+m+':'+s+'';
+		// For auction remaining time, display in window title
+		if (div.id == "auctionRemainTime") {
+			document.title = ' '+h+':'+m+':'+s+'';
+		}
 		return true;
 	}
 }
