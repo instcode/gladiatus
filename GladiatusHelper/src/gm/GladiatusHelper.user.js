@@ -21,6 +21,8 @@
  * @author    DUONG, Thien Duc <duongthienduc [at] gmail [dot] com>
  * @copyright DDTH.ORG
  * @history
+ * v3.3.7 2008.10.13
+ *   - Add Market (helper for food buying) module.
  * v3.3.6 2008.09.10
  * 	 - Move current Auction Helper into bak file for later implement
  * 	 - Restore Auction Helper (Beta)
