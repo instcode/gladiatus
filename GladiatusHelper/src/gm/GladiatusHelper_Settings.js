@@ -8,21 +8,19 @@
  *     - First version
  */
 
-/*********** SETTING UP ***********/
-GM_addStyle(<><![CDATA[
-.headerHighscore{left:145px;}
-.headerHonor{left:280px; top:4px}
-.headerRes,#rubies{left:440px;}
-#txt_msg{position:absolute; width:100px; height:24px; left:590px; top:7px; margin-right:3px; color: #000; font-family:"Verdana", serif; font-weight: bold; font-size:0.6em;}
-]]></>.toXMLString());
-
+/** ********* SETTING UP ********** */
 var plugin = document.createElement("span");
-plugin.setAttribute('class','topmenuitem');
-plugin.setAttribute('style','margin-top:8px; font-size:12px');
-plugin.innerHTML = "<a href='http://" + gameServer + "/game/index.php?mod=settings&" + sh + "' title='Configuration'>Settings</a>";
+plugin.setAttribute('class', 'topmenuitem');
+
+plugin.innerHTML = "<a href='" + siteUrl + "mod=settings&plugin=1&sh=" + secureHash + "' title='Configuration'>Settings</a>";
 document.getElementById('header').appendChild(plugin);
-/*********** SETTING UP ***********/
+/** ********* SETTING UP ********** */
 
-/*********** COMMON FUNCTIONS ***********/
-
+/** ********* COMMON FUNCTIONS ********** */
+function showSettingsModule() {
+	document.getElementById('contentBox').getElementsByTagName('td')[1].getElementsByTagName('span')[0].innerHTML = "Plugin Settings";
+	document.getElementById('contentBox').getElementsByTagName('td')[1].getElementsByTagName('div')[1].setAttribute('class', 'tab');
+	document.getElementById('contentBox').getElementsByTagName('td')[1].getElementsByTagName('div')[1].setAttribute('style', '');
+	document.getElementById('contentBox').getElementsByTagName('td')[1].getElementsByTagName('div')[1].innerHTML = '<a href="index.php?mod=settings&plugin=2&' + sh + '" style="height:22px">Buddies</a>';
+}
 /*********** COMMON FUNCTIONS ***********/
