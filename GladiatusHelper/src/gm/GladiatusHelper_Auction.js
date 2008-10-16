@@ -226,10 +226,12 @@ function collectAuctionItem() {
 			if (auctionId == ids[j]) {
 				var levelRegExp = /Level<\/span><span class=\\'tooltip_value\\'> (\d+)<\/span>/;
 				var regexpResult = contents[j].match(levelRegExp);
-				var bidderDiv = auctionBidDiv.getElementsByTagName('div')[1];
-				var levelDiv = document.createElement('div');
-				levelDiv.innerHTML = "Level: " + regexpResult[1];
-				auctionBidDiv.insertBefore(levelDiv, bidderDiv);
+				if (regexpResult) {
+					var bidderDiv = auctionBidDiv.getElementsByTagName('div')[1];
+					var levelDiv = document.createElement('div');
+					levelDiv.innerHTML = "Level: " + regexpResult[1];
+					auctionBidDiv.insertBefore(levelDiv, bidderDiv);
+				}
 				break;
 			}
 		}

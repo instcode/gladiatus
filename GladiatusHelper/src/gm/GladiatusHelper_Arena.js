@@ -86,148 +86,23 @@ function arenaGetStats(urlOverview, statsIndex, objOpponent) {
 			if ( statsIndex == 0 ) {
 				//finish retrieving my stats
 				arenaDisplayMyStats();
-				arenaCheckOpponentsOnPage();
+				if (siteMod != 'market') {
+					arenaCheckOpponentsOnPage();
+				}
 			} else {
-				arenaSimulateFight(statsIndex, objOpponent);
+				if (siteMod != 'market') {
+					arenaSimulateFight(statsIndex, objOpponent);
+				}
 			}
 		}
 	});
 }
 
-function diceAgainst(value) {
-	var diceValue = 0.0;
-	for ( var i = 0; i < 100; i++ ) {
-		diceValue += Math.random();
-	}
-	return diceValue < value*100.0;
-}
-
-function arenaSimulateATurn(attacker, defender, doubleHit) {
-	var chanceToHit = 0.0+attacker[statsIndexSkill];
-	var chanceToHit = chanceToHit/(0.0+attacker[statsIndexSkill]+defender[statsIndexAgility]);
-	
-	if ( diceAgainst(chanceToHit) ) {
-		//calculate real damage after subtracting armour absorption
-		var damage = randomInt(attacker[statsIndexDamage1], attacker[statsIndexDamage2]);
-		var reduced = randomInt(defender[statsIndexAbsorbMin], defender[statsIndexAbsorbMax]);
-		var realDamage = Math.max(0, damage-reduced);
-		defender[statsIndexHPCurrent] -= realDamage;
-		
-		//GM_log(attacker[statsIndexCharname]+' hit '+defender[statsIndexCharname]+' for '+realDamage);
-		
-		if ( defender[statsIndexHPCurrent] <= 0 ) {
-			//defender dies!
-			return;
-		}
-	} else {
-		//GM_log(attacker[statsIndexCharname]+' missed '+defender[statsIndexCharname]);
-	}
-	
-	var chanceDoubleHit = Math.max(0.0, (0.0+attacker[statsIndexCharisma]-defender[statsIndexCharisma])/100.0);
-	if ( !doubleHit && diceAgainst(chanceDoubleHit) ) {
-		arenaSimulateATurn(attacker, defender, true);
-	}
-}
-
-function arenaSimulateAFight(attacker, defender) {
-	var orgHpAttacker = attacker[statsIndexHPCurrent];
-	var orgHpDefender = defender[statsIndexHPCurrent];
-	var numTurnsMin = Math.max(3, Math.min(attacker[statsIndexLevel], defender[statsIndexLevel]));
-	var numTurnsMax = Math.max(3, Math.max(attacker[statsIndexLevel], defender[statsIndexLevel]));
-	var numTurns = randomInt(numTurnsMin, numTurnsMax);
-	
-	//GM_log(attacker[statsIndexCharname]+' vs '+defender[statsIndexCharname]+': '+numTurns+' turns');
-	
-	while ( numTurns > 0 ) {
-		arenaSimulateATurn(attacker, defender, false);
-		//GM_log('['+orgHpAttacker+'/'+attacker[statsIndexHPCurrent]+'] vs ['+orgHpDefender+'/'+defender[statsIndexHPCurrent]+']');
-		if ( attacker[statsIndexHPCurrent] <= 0 ) {
-			//GM_log(attacker[statsIndexCharname]+' died!');
-			//lose
-			return -1;
-		}
-		if ( defender[statsIndexHPCurrent] <= 0 ) {
-			//GM_log(defender[statsIndexCharname]+' died!');
-			//win
-			return 1;
-		}
-		
-		numTurns--;
-		if ( numTurns > 0 ) {
-			arenaSimulateATurn(defender, attacker, false);
-			//GM_log('['+orgHpAttacker+'/'+attacker[statsIndexHPCurrent]+'] vs ['+orgHpDefender+'/'+defender[statsIndexHPCurrent]+']');
-			if ( attacker[statsIndexHPCurrent] <= 0 ) {
-				//GM_log(attacker[statsIndexCharname]+' died!');
-				//lose
-				return -1;
-			}
-			if ( defender[statsIndexHPCurrent] <= 0 ) {
-				//GM_log(defender[statsIndexCharname]+' died!');
-				//win
-				return 1;
-			}
-		}
-		
-		numTurns--;
-	}
-	
-	orgHpAttacker = orgHpAttacker - attacker[statsIndexHPCurrent];
-	orgHpDefender = orgHpDefender - defender[statsIndexHPCurrent];
-	if ( orgHpAttacker > orgHpDefender ) {
-		//GM_log(defender[statsIndexCharname]+' losed!');
-		//win
-		return 1;
-	}
-	if ( orgHpAttacker < orgHpDefender ) {
-		//GM_log(attacker[statsIndexCharname]+' losed!');
-		//lose
-		return -1;
-	}
-	//GM_log('EVEN!');
-	return 0;
-}
-
 function arenaSimulateFight(index, objOpponent) {
 	debug('Simulating fight against ['+stats[index][statsIndexCharname]+']');
 
-	/* Using JavaScript simulator */
-	/*
-	var nSims = 100;
-	var nWins = 0;
-	
-	var attacker = Array();
-	var defender = Array();
-	for ( var n = 0; n < nSims; n++ ) {
-		for ( var i = 0; i < stats[0].length; i++ ) {
-			attacker[i] = stats[0][i];
-			defender[i] = stats[index][i];
-		}
-		var result = arenaSimulateAFight(attacker, defender);
-		if ( result > 0 ) nWins++;
-	}
-	objOpponent.parentNode.appendChild(document.createTextNode(' '));
-
-	var chanceToWin = nWins*100/nSims;
-	var color = '#000000';
-	if ( chanceToWin >= 90 ) {
-		color = '#009010';
-	} else if ( chanceToWin >= 75 ) {
-		color = '#0000ff';
-	} else if ( chanceToWin < 60 ) {
-		color = '#ff0000';
-	}
-				
-	var regexp = /p=(\d+)/;
-	var result = objOpponent.href.match(regexp);
-	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
-	var el = document.createElement('a');
-	el.href = urlMucNo;
-	el.innerHTML = '<small><font color='+color+'>(Lvl ' +stats[index][statsIndexLevel] + '/HP ' + stats[index][statsIndexHPCurrent] + '/' + chanceToWin+'%)</font></small>';
-	objOpponent.parentNode.appendChild(el);
-	*/
-
 	/* Using server simulator */
-	var nSims = 500;
+	var nSims = 200;
 	data = "count=" + nSims + "&";
 	data += "&gladiator1=" + stats[0][statsIndexCharname]+"&gladiator2=" + stats[index][statsIndexCharname];
 	data += "&hitpoint1=" + stats[0][statsIndexHPCurrent]+"&hitpoint2=" + stats[index][statsIndexHPCurrent];
