@@ -195,3 +195,43 @@ function processAuction(){
 	}
 	return result;
 }
+
+function collectAuctionItem() {
+	var reports = document.getElementsByTagName('script')[3].innerHTML;
+	var items = document.getElementById('auction_table').getElementsByTagName('td');
+	var contents = new Array();
+	var ids = new Array();
+	var a, b;
+	for ( var i = 0;; i++) {
+		var begin = reports.indexOf('AddCharDiv(');
+		var end = reports.indexOf('</tr></table>\');');
+
+		if (end == -1)
+			break;
+		
+		a = reports.substring(begin, end + 17);
+		b = reports.substring(begin + 12, reports.indexOf('\','));
+		if (a.length > 300) {
+			contents.push(a);
+			ids.push(b);
+		}
+		reports = reports.substring(end + 17, reports.length);
+	}
+	
+	for ( var i = 0; i < items.length; i++) {
+		var id = items[i].getElementsByTagName('input')[0].getAttribute('value');
+		var auctionBidDiv = items[i].getElementsByTagName('div')[2];
+		var auctionId = "auction_" + id;
+		for ( var j = 0; j < contents.length; j++) {
+			if (auctionId == ids[j]) {
+				var levelRegExp = /Level<\/span><span class=\\'tooltip_value\\'> (\d+)<\/span>/;
+				var regexpResult = contents[j].match(levelRegExp);
+				var bidderDiv = auctionBidDiv.getElementsByTagName('div')[1];
+				var levelDiv = document.createElement('div');
+				levelDiv.innerHTML = "Level: " + regexpResult[1];
+				auctionBidDiv.insertBefore(levelDiv, bidderDiv);
+				break;
+			}
+		}
+	}
+}
