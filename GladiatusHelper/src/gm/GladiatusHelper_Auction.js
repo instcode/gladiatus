@@ -219,18 +219,24 @@ function collectAuctionItem() {
 	}
 	
 	for ( var i = 0; i < items.length; i++) {
+		if (items[i].innerHTML == '&nbsp;') {
+			break;
+		}
 		var id = items[i].getElementsByTagName('input')[0].getAttribute('value');
 		var auctionBidDiv = items[i].getElementsByTagName('div')[2];
 		var auctionId = "auction_" + id;
 		for ( var j = 0; j < contents.length; j++) {
 			if (auctionId == ids[j]) {
-				var levelRegExp = /Level<\/span><span class=\\'tooltip_value\\'> (\d+)<\/span>/;
-				var regexpResult = contents[j].match(levelRegExp);
+				var regExp = /<tr><td style=\\'color:([^;]*); font-weight: bold; font-size:9pt\\'>([^<]*)[^L]*Level[^0-9]*(\d+)/;
+				var regexpResult = contents[j].match(regExp);
 				if (regexpResult) {
 					var bidderDiv = auctionBidDiv.getElementsByTagName('div')[1];
 					var levelDiv = document.createElement('div');
-					levelDiv.innerHTML = "Level: " + regexpResult[1];
+					var nameDiv = document.createElement('div');
+					nameDiv.innerHTML = "<font color='" + regexpResult[1] + ">" + regexpResult[2] + "</font>";
+					levelDiv.innerHTML = "<font color='" + regexpResult[1] + "'>Level: " + regexpResult[3] + "</font>";
 					auctionBidDiv.insertBefore(levelDiv, bidderDiv);
+					auctionBidDiv.insertBefore(nameDiv, levelDiv);
 				}
 				break;
 			}
