@@ -31,16 +31,17 @@ const statsIndexAbsorbMin    = 17;
 const statsIndexAbsorbMax    = 18;
 
 var divCharStats = document.getElementById('panelCharStats');
+var characterStats;
 /*********** SETTING UP ***********/
 
 function overviewDisplayCharacterStats() {
-	getStats(urlOverview, displayCharacterStats);
+	getStats({url: urlOverview, handler: displayCharacterStats});
 }
 
-function getStats(urlOverview, statsHandler) {
+function getStats(params) {
 	GM_xmlhttpRequest({
 		method: "GET",
-		url: urlOverview,
+		url: params.url,
 		onload: function(responseDetails) {
 			pulled = document.createElement('div');
 			pulled.innerHTML = responseDetails.responseText;
@@ -80,12 +81,14 @@ function getStats(urlOverview, statsHandler) {
 			} else {
 				debug('Error while getting damage stats for ['+stats[statsIndexCharname]+']!');
 			}
-			statsHandler(stats);
+			params.stats = stats;
+			params.handler(params);
 		}
 	});
 }
 
-function displayCharacterStats(stats) {
+function displayCharacterStats(params) {
+	characterStats = params.stats;
 	var str = '<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">';
 	str += '<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>'
 		+ stats[statsIndexCharname]+'</b></td></tr>';

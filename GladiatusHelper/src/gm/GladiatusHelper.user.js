@@ -41,9 +41,9 @@
  *   - Quest Helper: quest description, status and reward
  * v3.3.2 2008.08.09
  *   - refined information panel
- *   - auto-scroll panel (thanks to duongminhduc)
+ *   - auto-scroll panel
  *   - timer on Stable work
- *   - timer on Travelling
+ *   - timer on Traveling
  * v3.3.1 2008.08.08
  *   - first release, mostly for gladiatus.vn
  *   - check for links to another players on the page and display duel prediction against each
@@ -64,7 +64,8 @@ function main() {
 	else if (siteMod == 'auction') {
 		collectAuctionItem();
 	}
-	arenaDisplayMyStatsAndCheckOpponents();
+	overviewDisplayCharacterStats();
+	//arenaDisplayMyStatsAndCheckOpponents();
 	workDisplayWorkStatus();
 	questDisplayQuestStatus();
 	requestAuctionPage();
