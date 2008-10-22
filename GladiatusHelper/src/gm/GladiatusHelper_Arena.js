@@ -10,109 +10,34 @@
  */
  
 /*********** SETTING UP ***********/
-const statsIndexCharname     = 0;
-const statsIndexLevel        = 1;
-const statsIndexHP           = 2;
-const statsIndexExp          = 3;
-const statsIndexStrength     = 4;
-const statsIndexSkill        = 5;
-const statsIndexAgility      = 6;
-const statsIndexConstitution = 7;
-const statsIndexCharisma     = 8;
-const statsIndexIntelligence = 9;
-const statsIndexArmour       = 10;
-const statsIndexDamage1      = 11;
-const statsIndexDamage2      = 12;
-const statsIndexHPCurrent    = 13;
-const statsIndexHPMax        = 14;
-const statsIndexExpCurrent   = 15;
-const statsIndexExpMax       = 16;
-const statsIndexAbsorbMin    = 17;
-const statsIndexAbsorbMax    = 18;
-
-var stats = new Array();
-
-var divCharStats = document.getElementById('panelCharStats');
 /*********** SETTING UP ***********/
 
-function arenaDisplayMyStatsAndCheckOpponents() {
-	arenaGetStats(urlOverview, 0, null);
-}
-
-function arenaGetStats(urlOverview, statsIndex, objOpponent) {
-	GM_xmlhttpRequest({
-		method: "GET",
-		url: urlOverview,
-		onload: function(responseDetails) {
-			pulled = document.createElement('div');
-			pulled.innerHTML = responseDetails.responseText;
-			stats[statsIndex] = new Array();
-			stats[statsIndex][statsIndexCharname]     = getSpanContent(pulled, 'playername', 'class');
-			stats[statsIndex][statsIndexLevel]        = parseInt(getSpanContent(pulled, 'char_level', 'id'));
-			stats[statsIndex][statsIndexHP]           = getSpanContent(pulled, 'char_leben', 'id');
-			stats[statsIndex][statsIndexExp]          = getSpanContent(pulled, 'char_exp', 'id');
-			stats[statsIndex][statsIndexStrength]     = parseInt(getSpanContent(pulled, 'char_f0', 'id'));
-			stats[statsIndex][statsIndexSkill]        = parseInt(getSpanContent(pulled, 'char_f1', 'id'));
-			stats[statsIndex][statsIndexAgility]      = parseInt(getSpanContent(pulled, 'char_f2', 'id'));
-			stats[statsIndex][statsIndexConstitution] = parseInt(getSpanContent(pulled, 'char_f3', 'id'));
-			stats[statsIndex][statsIndexCharisma]     = parseInt(getSpanContent(pulled, 'char_f4', 'id'));
-			//stats[statsIndex][statsIndexIntelligence] = parseInt(getSpanContent(pulled, 'char_f5'));
-			stats[statsIndex][statsIndexArmour]       = parseInt(getSpanContent(pulled, 'char_panzer', 'id'));
-
-			var armour = stats[statsIndex][statsIndexArmour];
-			stats[statsIndex][statsIndexAbsorbMin] = Math.floor(armour/66) - Math.floor((armour-66)/660+1);
-			stats[statsIndex][statsIndexAbsorbMax] = Math.floor(armour/66) + Math.floor(armour/660);
-
-			var hpStr = getDivAttribute(pulled, 'char_leben_tt', 'id', 'onMouseOver');
-			var regexp = /.*?(\d+)\s*\/\s*(\d+)/;
-			var regexpResult = hpStr.match(regexp);
-			stats[statsIndex][statsIndexHPCurrent] = parseInt(regexpResult[1]);
-			stats[statsIndex][statsIndexHPMax]     = parseInt(regexpResult[2]);
-			
-			var expStr = getDivAttribute(pulled, 'char_exp_tt', 'id', 'onMouseOver');
-			var regexp = /.*?(\d+)\s*\/\s*(\d+)/;
-			var regexpResult = expStr.match(regexp);
-			stats[statsIndex][statsIndexExpCurrent] = parseInt(regexpResult[1]);
-			stats[statsIndex][statsIndexExpMax]     = parseInt(regexpResult[2]);
-
-			dmg = getSpanContent(pulled, 'char_schaden');
-			if ( dmg != '' ) {
-				stats[statsIndex][statsIndexDamage1] = parseInt(dmg.split('-')[0].replace(/^\s+|\s+$/g, ''));
-				stats[statsIndex][statsIndexDamage2] = parseInt(dmg.split('-')[1].replace(/^\s+|\s+$/g, ''));
-			} else {
-				debug('Error while getting damage stats for ['+stats[statsIndex][statsIndexCharname]+']!');
-			}
-			
-			if ( statsIndex == 0 ) {
-				//finish retrieving my stats
-				arenaDisplayMyStats();
-				if (siteMod != 'market') {
-					arenaCheckOpponentsOnPage();
-				}
-			} else {
-				if (siteMod != 'market') {
-					arenaSimulateFight(statsIndex, objOpponent);
-				}
-			}
+function arenaSimulateFights() {
+	var allLinks = document.getElementsByTagName('a');
+	for ( var i = 0; i < allLinks.length; i++ ) {
+		var url = allLinks[i].href;
+		if ( url.search(/\?mod=player&p=(\d+)/) >= 0 ) {			
+			getStats({url: url, handler: arenaSimulateFight, node: allLinks[i]});
 		}
-	});
+	}
 }
 
-function arenaSimulateFight(index, objOpponent) {
-	debug('Simulating fight against ['+stats[index][statsIndexCharname]+']');
+function arenaSimulateFight(params) {
+	var opponentStats = params.stats;
+	debug('Simulating fight against ['+opponentStats[statsIndexCharname]+']');
 
 	/* Using server simulator */
 	var nSims = 200;
 	data = "count=" + nSims + "&";
-	data += "&gladiator1=" + stats[0][statsIndexCharname]+"&gladiator2=" + stats[index][statsIndexCharname];
-	data += "&hitpoint1=" + stats[0][statsIndexHPCurrent]+"&hitpoint2=" + stats[index][statsIndexHPCurrent];
-	data += "&level1=" + stats[0][statsIndexLevel]+"&level2=" + stats[index][statsIndexLevel];
-	data += "&skill1=" + stats[0][statsIndexSkill]+"&skill2=" + stats[index][statsIndexSkill];
-	data += "&agility1=" + stats[0][statsIndexAgility]+"&agility2=" + stats[index][statsIndexAgility];
-	data += "&charisma1=" + stats[0][statsIndexCharisma]+"&charisma2=" + stats[index][statsIndexCharisma];
-	data += "&armour1=" + stats[0][statsIndexArmour]+"&armour2=" + stats[index][statsIndexArmour];
-	data += "&damage11=" + stats[0][statsIndexDamage1]+"&damage12=" + stats[index][statsIndexDamage1];
-	data += "&damage21=" + stats[0][statsIndexDamage2]+"&damage22=" + stats[index][statsIndexDamage2];
+	data += "&gladiator1=" + characterStats[statsIndexCharname]+"&gladiator2=" + opponentStats[statsIndexCharname];
+	data += "&hitpoint1=" + characterStats[statsIndexHPCurrent]+"&hitpoint2=" + opponentStats[statsIndexHPCurrent];
+	data += "&level1=" + characterStats[statsIndexLevel]+"&level2=" + opponentStats[statsIndexLevel];
+	data += "&skill1=" + characterStats[statsIndexSkill]+"&skill2=" + opponentStats[statsIndexSkill];
+	data += "&agility1=" + characterStats[statsIndexAgility]+"&agility2=" + opponentStats[statsIndexAgility];
+	data += "&charisma1=" + characterStats[statsIndexCharisma]+"&charisma2=" + opponentStats[statsIndexCharisma];
+	data += "&armour1=" + characterStats[statsIndexArmour]+"&armour2=" + opponentStats[statsIndexArmour];
+	data += "&damage11=" + characterStats[statsIndexDamage1]+"&damage12=" + opponentStats[statsIndexDamage1];
+	data += "&damage21=" + characterStats[statsIndexDamage2]+"&damage22=" + opponentStats[statsIndexDamage2];
 	data += "&submit=Simulate";
 
     GM_xmlhttpRequest({
@@ -126,11 +51,11 @@ function arenaSimulateFight(index, objOpponent) {
 			var regexp = /(\d+).*?(\d+).*?(\d+)/;
 			var result = responseDetails.responseText.match(regexp);
 			if ( result.length > 1 ) {
-				objOpponent.parentNode.appendChild(document.createTextNode(' '));
-
 				var chanceToWin = result[1]*100/nSims;
 				var dmgDone = result[2];
-				var dmgReceive = result[3];
+				var dmgReceived = result[3];
+				displaySimulationResult(chanceToWin, dmgDone, dmgReceived);
+				
 				var color = '#000000';
 				if ( chanceToWin >= 90 ) {
 					color = '#009010';
@@ -140,60 +65,18 @@ function arenaSimulateFight(index, objOpponent) {
 					color = '#ff0000';
 				}
 				
+				var objOpponent = params.node;
+				objOpponent.parentNode.appendChild(document.createTextNode(' '));
 				var regexp = /p=(\d+)/;
 				var result = objOpponent.href.match(regexp);
 				var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
 				var el = document.createElement('a');
 				el.href = urlMucNo;
-				el.innerHTML = '<small><font color='+color+'>(Lvl ' +stats[index][statsIndexLevel] 
-					+ '/HP ' + stats[index][statsIndexHPCurrent] + '/' 
-					+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceive+'</font>)</font></small>';
+				el.innerHTML = '<small><font color='+color+'>(Lvl ' +opponentStats[statsIndexLevel] 
+					+ '/HP ' + opponentStats[statsIndexHPCurrent] + '/' 
+					+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceived+'</font>)</font></small>';
 				objOpponent.parentNode.appendChild(el);
 			}
 		}
 	});
-}
-
-function arenaCheckOpponentsOnPage() {
-	var allLinks = document.getElementsByTagName('a');
-	for ( var i = 0; i < allLinks.length; i++ ) {
-		var url = allLinks[i].href;
-		if ( url.search(/\?mod=player/) >= 0 ) {			
-			arenaGetStats(url, i+1, allLinks[i]);
-		}
-	}
-}
-
-function arenaDisplayMyStats() {
-	var str = '<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">';
-	str += '<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>'
-		+ stats[0][statsIndexCharname]+'</b></td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Level</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexLevel]+'</td></tr>';
-	//str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">HP</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-	//	+ stats[0][statsIndexHP]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">HP</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexHPCurrent]+' / '+stats[0][statsIndexHPMax]+'</td></tr>';
-	//str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Exp</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-	//	+ stats[0][statsIndexExp]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Exp</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexExpCurrent]+' / '+stats[0][statsIndexExpMax]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Strength</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexStrength]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Skill</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexSkill]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Agility</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexAgility]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Constitution</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexConstitution]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Charisma</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexCharisma]+'</td></tr>';
-	//str += '<tr><td align="left">Intelligence</td><td align="right">'+stats[0][statsIndexIntelligence]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Armour</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+ stats[0][statsIndexArmour]+'</td></tr>';
-	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Absorb</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
-		+stats[0][statsIndexAbsorbMin]+'-'+stats[0][statsIndexAbsorbMax]+'</td></tr>';
-	str += '<tr><td align="left">Damage</td><td align="right">'+stats[0][statsIndexDamage1]+'-'+stats[0][statsIndexDamage2]+'</td></tr>';
-	str += '</table>';
-	divCharStats.innerHTML = str;
 }
