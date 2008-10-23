@@ -31,11 +31,15 @@ const statsIndexAbsorbMin    = 17;
 const statsIndexAbsorbMax    = 18;
 
 var divCharStats = document.getElementById('panelCharStats');
-var characterStats;
 /*********** SETTING UP ***********/
 
 function overviewDisplayCharacterStats() {
-	getStats({url: urlOverview, handler: displayCharacterStats});
+	getStats({
+		url: urlOverview,
+		handler: function(params) {
+			displayCharacterStats(params.stats);
+		}
+	});
 }
 
 function getStats(params) {
@@ -87,8 +91,7 @@ function getStats(params) {
 	});
 }
 
-function displayCharacterStats(params) {
-	characterStats = params.stats;
+function displayCharacterStats(stats) {
 	var str = '<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">';
 	str += '<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>'
 		+ stats[statsIndexCharname]+'</b></td></tr>';

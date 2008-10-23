@@ -5,7 +5,9 @@
 // @include        *.gladiatus.*
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Common.js
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Settings.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Overview.js
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Arena.js
+// @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Battle.js
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Work.js
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Quest.js
 // @require        http://gladiatus.googlecode.com/svn/trunk/GladiatusHelper/src/gm/GladiatusHelper_Auction.js
@@ -61,11 +63,13 @@ function main() {
 	if (siteMod == 'market') {
 		marketDisplayPriceRate();
 	}
-	else if (siteMod == 'auction') {
-		collectAuctionItem();
+	else {
+		arenaSimulateFights();
+		if (siteMod == 'auction') {
+			collectAuctionItem();
+		}
 	}
 	overviewDisplayCharacterStats();
-	//arenaDisplayMyStatsAndCheckOpponents();
 	workDisplayWorkStatus();
 	questDisplayQuestStatus();
 	requestAuctionPage();

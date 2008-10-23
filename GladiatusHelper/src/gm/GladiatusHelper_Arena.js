@@ -13,13 +13,19 @@
 /*********** SETTING UP ***********/
 
 function arenaSimulateFights() {
-	var allLinks = document.getElementsByTagName('a');
-	for ( var i = 0; i < allLinks.length; i++ ) {
-		var url = allLinks[i].href;
-		if ( url.search(/\?mod=player&p=(\d+)/) >= 0 ) {			
-			getStats({url: url, handler: arenaSimulateFight, node: allLinks[i]});
+	getStats({
+		url: urlOverview,
+		handler: function(params) {
+			stats = params.stats;
+			var allLinks = document.getElementsByTagName('a');
+			for ( var i = 0; i < allLinks.length; i++ ) {
+				var url = allLinks[i].href;
+				if ( url.search(/\?mod=player/) >= 0 ) {
+					getStats({url: url, handler: arenaSimulateFight, node: allLinks[i]});
+				}
+			}
 		}
-	}
+	});
 }
 
 function arenaSimulateFight(params) {
@@ -29,15 +35,15 @@ function arenaSimulateFight(params) {
 	/* Using server simulator */
 	var nSims = 200;
 	data = "count=" + nSims + "&";
-	data += "&gladiator1=" + characterStats[statsIndexCharname]+"&gladiator2=" + opponentStats[statsIndexCharname];
-	data += "&hitpoint1=" + characterStats[statsIndexHPCurrent]+"&hitpoint2=" + opponentStats[statsIndexHPCurrent];
-	data += "&level1=" + characterStats[statsIndexLevel]+"&level2=" + opponentStats[statsIndexLevel];
-	data += "&skill1=" + characterStats[statsIndexSkill]+"&skill2=" + opponentStats[statsIndexSkill];
-	data += "&agility1=" + characterStats[statsIndexAgility]+"&agility2=" + opponentStats[statsIndexAgility];
-	data += "&charisma1=" + characterStats[statsIndexCharisma]+"&charisma2=" + opponentStats[statsIndexCharisma];
-	data += "&armour1=" + characterStats[statsIndexArmour]+"&armour2=" + opponentStats[statsIndexArmour];
-	data += "&damage11=" + characterStats[statsIndexDamage1]+"&damage12=" + opponentStats[statsIndexDamage1];
-	data += "&damage21=" + characterStats[statsIndexDamage2]+"&damage22=" + opponentStats[statsIndexDamage2];
+	data += "&gladiator1=" + stats[statsIndexCharname]+"&gladiator2=" + opponentStats[statsIndexCharname];
+	data += "&hitpoint1=" + stats[statsIndexHPCurrent]+"&hitpoint2=" + opponentStats[statsIndexHPCurrent];
+	data += "&level1=" + stats[statsIndexLevel]+"&level2=" + opponentStats[statsIndexLevel];
+	data += "&skill1=" + stats[statsIndexSkill]+"&skill2=" + opponentStats[statsIndexSkill];
+	data += "&agility1=" + stats[statsIndexAgility]+"&agility2=" + opponentStats[statsIndexAgility];
+	data += "&charisma1=" + stats[statsIndexCharisma]+"&charisma2=" + opponentStats[statsIndexCharisma];
+	data += "&armour1=" + stats[statsIndexArmour]+"&armour2=" + opponentStats[statsIndexArmour];
+	data += "&damage11=" + stats[statsIndexDamage1]+"&damage12=" + opponentStats[statsIndexDamage1];
+	data += "&damage21=" + stats[statsIndexDamage2]+"&damage22=" + opponentStats[statsIndexDamage2];
 	data += "&submit=Simulate";
 
     GM_xmlhttpRequest({
@@ -54,29 +60,31 @@ function arenaSimulateFight(params) {
 				var chanceToWin = result[1]*100/nSims;
 				var dmgDone = result[2];
 				var dmgReceived = result[3];
-				displaySimulationResult(chanceToWin, dmgDone, dmgReceived);
-				
-				var color = '#000000';
-				if ( chanceToWin >= 90 ) {
-					color = '#009010';
-				} else if ( chanceToWin >= 75 ) {
-					color = '#0000ff';
-				} else if ( chanceToWin < 60 ) {
-					color = '#ff0000';
-				}
-				
-				var objOpponent = params.node;
-				objOpponent.parentNode.appendChild(document.createTextNode(' '));
-				var regexp = /p=(\d+)/;
-				var result = objOpponent.href.match(regexp);
-				var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
-				var el = document.createElement('a');
-				el.href = urlMucNo;
-				el.innerHTML = '<small><font color='+color+'>(Lvl ' +opponentStats[statsIndexLevel] 
-					+ '/HP ' + opponentStats[statsIndexHPCurrent] + '/' 
-					+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceived+'</font>)</font></small>';
-				objOpponent.parentNode.appendChild(el);
+				showFightResult(params, chanceToWin, dmgDone, dmgReceived);
 			}
 		}
 	});
+}
+
+function showFightResult(params, chanceToWin, dmgDone, dmgReceived) {
+	var color = '#000000';
+	if ( chanceToWin >= 90 ) {
+		color = '#009010';
+	} else if ( chanceToWin >= 75 ) {
+		color = '#0000ff';
+	} else if ( chanceToWin < 60 ) {
+		color = '#ff0000';
+	}
+	var opponentStats = params.stats;
+	var objOpponent = params.node;
+	objOpponent.parentNode.appendChild(document.createTextNode(' '));
+	var regexp = /p=(\d+)/;
+	var result = objOpponent.href.match(regexp);
+	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
+	var el = document.createElement('a');
+	el.href = urlMucNo;
+	el.innerHTML = '<small><font color='+color+'>(Lvl ' +opponentStats[statsIndexLevel] 
+		+ '/HP ' + opponentStats[statsIndexHPCurrent] + '/' 
+		+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceived+'</font>)</font></small>';
+	objOpponent.parentNode.appendChild(el);
 }

@@ -138,7 +138,7 @@ function checkQuestRecAvailable() {
 		method: "GET",
 		url: urlTavern,
 		onload: function(responseDetails) {
-			var responseText responseDetails.responseText;
+			var responseText = responseDetails.responseText;
 			var matchRegExp = /value="([^"]*)" name="dif3"/;
 			var group = responseText.match(matchRegExp);
 			if (group != null) {
