@@ -227,7 +227,7 @@ function collectAuctionItem() {
 		var auctionId = "auction_" + id;
 		for ( var j = 0; j < contents.length; j++) {
 			if (auctionId == ids[j]) {
-				var regExp = /<tr><td style=\\'color:([^;]*); font-weight: bold; font-size:9pt\\'>([^<]*)[^L]*Level[^0-9]*(\d+)/;
+				var regExp = /<tr><td style=\\'color:([^;]*);[^\\]*\\'>([^<]*)[^L]*Level[^0-9]*(\d+)/;
 				var regexpResult = contents[j].match(regExp);
 				if (regexpResult) {
 					var bidderDiv = auctionBidDiv.getElementsByTagName('div')[1];
