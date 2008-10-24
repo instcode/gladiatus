@@ -158,7 +158,6 @@ function autoReceiveQuest(quest) {
 		headers: {'Content-type':'application/x-www-form-urlencoded'},
 		data: encodeURI(strData),
 		onload: function() {
-			alert("Received quest");
 			window.reload();
 		}
 	});
