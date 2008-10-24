@@ -31,6 +31,7 @@ const statsIndexAbsorbMin    = 17;
 const statsIndexAbsorbMax    = 18;
 
 var divCharStats = document.getElementById('panelCharStats');
+var divOverview = document.getElementById('panelOverview');
 /*********** SETTING UP ***********/
 
 function overviewDisplayCharacterStats() {
@@ -38,6 +39,7 @@ function overviewDisplayCharacterStats() {
 		url: urlOverview,
 		handler: function(params) {
 			displayCharacterStats(params.stats);
+			displayOverview(params.stats);
 		}
 	});
 }
@@ -119,4 +121,34 @@ function displayCharacterStats(stats) {
 	str += '<tr><td align="left">Damage</td><td align="right">'+stats[statsIndexDamage1]+'-'+stats[statsIndexDamage2]+'</td></tr>';
 	str += '</table>';
 	divCharStats.innerHTML = str;
+}
+
+function displayOverview(stats) {
+	var baseValue = 1.25 * stats[statsIndexLevel];
+	if (baseValue - stats[statsIndexLevel] > 9) {
+		baseValue = stats[statsIndexLevel] + 9;
+	}
+	var auctionLevel = Math.round(baseValue + 5) + "";
+	var marketLevel = Math.floor(baseValue) + "";
+	var str = 
+		'<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">' +
+			'<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>Item\'s Level</b></td></tr>' +
+			'<tr>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlAuction + '">Auction</a></td>' +
+				'<td align="right" style="border-bottom: 1px solid #c0c0c0;">' + auctionLevel + '</td>' +
+			'</tr>' +
+			'<tr>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlMarket + '">Market</a></td>' +
+				'<td align="right" style="border-bottom: 1px solid #c0c0c0;">' + marketLevel + '</td>' +
+			'</tr>' +
+			'<tr>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlMarketFood1 + '">Food 1</a></td>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlMarketFood2 + '">Food 2</a></td>' +
+			'</tr>' +
+			'<tr>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlMarketLevel + '">Level</a></td>' +
+				'<td align="left" style="border-bottom: 1px solid #c0c0c0;"><a href="' + urlMarketPrice + '">Price</a></td>' +
+			'</tr>' +
+		'</table>';
+	divOverview.innerHTML = str;
 }

@@ -22,6 +22,8 @@ divPanel.innerHTML = STATUS +
 				'<div id="panelWorkStatus"></div>' +
 				'<div style="height: 4px"></div>' +
 				'<div id="panelAuctionStatus"></div>' +
+				'<div style="height: 4px"></div>' +
+				'<div id="panelOverview"></div>' +
 			'</td>' +
 		'</tr>' +
 		'<tr><td colspan="3">&nbsp;</td></tr>'+
@@ -44,6 +46,7 @@ var urlTavern;
 var urlWork;
 var urlArena;
 var urlAuction;
+var urlMarket;
 var urlSettings;
 
 var currentTime = new Date();
@@ -59,6 +62,11 @@ var urlWork = siteUrl + 'mod=work&sh='+secureHash;
 var urlTavern = siteUrl + 'mod=tavern&sh='+secureHash;
 var urlArena = siteUrl + 'mod=arena&sh='+secureHash;
 var urlAuction = siteUrl + 'mod=auction&sh='+secureHash;
+var urlMarket = siteUrl + 'mod=market&f=0&s=p&qry=&p=1&sh='+secureHash;
+var urlMarketFood1 = siteUrl + 'mod=market&f=7&s=p&qry=&p=1&sh='+secureHash;
+var urlMarketFood2 = siteUrl + 'mod=market&f=7&s=pd&qry=&p=1&sh='+secureHash;
+var urlMarketLevel = siteUrl + 'mod=market&f=0&s=ld&qry=&p=1&sh='+secureHash;
+var urlMarketPrice = siteUrl + 'mod=market&f=0&s=p&qry=&p=1&sh='+secureHash;
 var urlSettings = siteUrl + 'mod=settings&sh='+secureHash;
 /*********** SETTING UP ***********/
 
