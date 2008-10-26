@@ -124,12 +124,12 @@ function displayCharacterStats(stats) {
 }
 
 function displayOverview(stats) {
-	var baseValue = 1.25 * stats[statsIndexLevel];
-	if (baseValue - stats[statsIndexLevel] > 9) {
-		baseValue = stats[statsIndexLevel] + 9;
-	}
-	var auctionLevel = Math.round(baseValue + 5) + "";
-	var marketLevel = Math.floor(baseValue) + "";
+	var marketLevel = Math.floor(stats[statsIndexLevel] + Math.min(0.25 * stats[statsIndexLevel], 9));
+	var baseValue = 0.25 * (stats[statsIndexLevel] + 5);
+	var auctionLevelMin = Math.floor(stats[statsIndexLevel] + 5 - baseValue);
+	var auctionLevelMax = Math.round(stats[statsIndexLevel] + 5 + Math.min(baseValue, 9));
+	var auctionLevel = auctionLevelMin + "-" + auctionLevelMax;
+	
 	var str = 
 		'<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">' +
 			'<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>Item\'s Level</b></td></tr>' +
