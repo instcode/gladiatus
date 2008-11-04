@@ -9,6 +9,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from org.ddth.game.gladiatus.arena.Simulator import Simulator
 from org.ddth.game.gladiatus.auction.AuctionWatcher import AuctionWatcher
+from org.ddth.game.gladiatus.core.DecisionHelper import DecisionHelper
 
 from org.ddth.game.gladiatus import TEMPLATE_DIRS
 
@@ -23,7 +24,8 @@ application = webapp.WSGIApplication(
                     [
                         ('/', Home),
                         ('/auction.py', AuctionWatcher),
-                        ('/simulate.py', Simulator)
+                        ('/simulate.py', Simulator),
+                        ('/ask/(.*).py', DecisionHelper),
                     ],
                     debug=True)
 

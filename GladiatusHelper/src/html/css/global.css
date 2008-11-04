@@ -8,11 +8,11 @@ body {
 	scrollbar-face-color: #dee3e7;
 	scrollbar-highlight-color: #fff;
 	scrollbar-shadow-color: #dee3e7;
-	scrollbar-track-color: #efefef
+	scrollbar-track-color: #efefef;
+	text-align: center;
 }
 
 font, th, td, p {
-	color: #000;
 	font: 11px Verdana, Arial, Helvetica, sans-serif
 }
 
@@ -31,6 +31,8 @@ font, th, td, p {
 #content {
 	margin-top: 30px;
 	margin-bottom: 30px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #footer {
@@ -41,7 +43,7 @@ font, th, td, p {
 #events {
 	margin: 0 0 0 0px;
 	background: #FFFFFF none repeat scroll 0 0;
-	border: 1px solid #006699;
+	border: 1px solid #FFFFFF;
 	color: #000000;
 }
 
@@ -66,13 +68,21 @@ font, th, td, p {
 	letter-spacing: 1px;
 }
 
+#alerts .header {
+	color: #EDF6F9;
+	font-weight: bold;
+	background: #036;
+	text-align: center;
+	letter-spacing: 1px;
+}
+
 #events .row {
 	background: #cad9ea;
 	color: #000;
 	text-align: center;
 }
 
-#events .status {
+#events .summary {
 	background: #d9e2ec;
 	color: #000
 }

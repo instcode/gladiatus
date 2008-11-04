@@ -1,5 +1,5 @@
 from random import randint
-from org.ddth.game.gladiatus.core.Gladiatus import Character
+from org.ddth.game.gladiatus.core.GladiatusModel import Character
     
 class Gladiator:
     def __init__(self):
@@ -114,6 +114,9 @@ class BattleV040(Battle):
         return tuple(statistic);
 
     def check(self, attacker, defender):
+        '''
+        Check whether hp is enough to go on next round
+        '''
         if (defender.hp < 1):
             if (attacker == self.gladiator1):
                 return 1;
