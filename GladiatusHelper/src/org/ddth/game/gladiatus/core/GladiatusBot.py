@@ -5,13 +5,18 @@ from google.appengine.api import urlfetch_stub
 import os, sys, re, sched, time, urllib, getopt, exceptions
 
 class GladiatusBot:
-    def __init__(self, server, username, password, centurion):
+    def __init__(self, server, username, password):
         self.server = server
         self.username = username
         self.password = password
-        self.centurion = centurion
+        self.centurion = False
         self.cookies = ""
         self.sh = ""
+        self.gold = 0
+        self.ruby = 0
+        self.work = [0, "00:00:00"]
+        self.arena = [0, "00:00:00"]
+        self.expedition = [0, "00:00:00"]
     
     def log(self, message):
         print '[' + time.strftime("%Y-%m-%d %H:%M:%S") + ']: ' + message 
@@ -51,10 +56,14 @@ class GladiatusBot:
         try:
             handler = service_descriptor['handler']
             if callable(handler):
+                self.overview(http_result.content)
                 return handler(http_result)
-        except:
+        except KeyError:
             pass
         return -1
+    
+    def isCenturion(self):
+        return self.centurion
     
     def login(self):
         """
@@ -74,6 +83,7 @@ class GladiatusBot:
                         "http_url": 'http://%s/game/index.php?mod=overview&sh=%s&web_redirected=1' % (self.server, self.sh),
                     })
                 self.log("%s logged in %s successfully." % (self.username, self.server));
+                self.authorize()
             except:
                 raise exceptions.Exception("Failed to log %s in server %s!" % (self.username, self.server));
         
@@ -84,18 +94,45 @@ class GladiatusBot:
                 "handler": handler
             })
 
-    def remain(self, content):
-        #Horse: re.search('mod=work&cancel=1', content)
-        m = re.search("<span id='bx0'[^>]*>(\d\d):(\d\d):(\d\d)", content)
-        remaining = -1
+    def authorize(self):
+        """
+        Description
+            Check whether this bot has premium account or not
+        """
+        def handler(http_result):
+            m = re.search('(\d+) ng.{1,3}y c.{1,3}n l.{1,3}i', http_result.content)
+            if m is not None:
+                self.centurion = True
+                self.log('%s day(s) of centurion left.' % (m.group(1)))
+            else:
+                self.log('Not a centurion.')
+            self.overview(http_result.content)
+        
+        self.invoke({
+                "http_method": "GET",
+                "http_url": 'http://%s/game/index.php?mod=premium&submod=rubies&sh=%s' % (self.server, self.sh),
+                "handler": handler
+            })
+
+    def overview(self, content):
+        mod = "none"
+        remaining = (0, 0, 0, 0)
+        gold = re.search('<span class="charvaluesSub" id="sstat_gold_val">([\.0-9]+)</span>', content).group(1)
+        ruby = re.search('<span class="charvaluesSub" id="sstat_ruby_val">(\d+)</span>', content).group(1)
+        m = re.search("<span id='bx0'[^>]*>(\d\d):(\d\d):(\d\d).*document.location=([^;]*);", content)
         if m is not None:
-            remaining = int(m.group(1)) * 3600 + int(m.group(2)) * 60 +  int(m.group(3))
-            self.log("Remaining time is %s:%s:%s " % (m.group(1), m.group(2), m.group(3)))
-        return remaining
+            timeleft = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+            remaining = (timeleft, "%s:%s:%s" % (m.group(1), m.group(2), m.group(3)))
+            d = re.search("'index.php?mod=([^&]*)&", m.group(4))
+            mod = "work"
+            if d is not None:
+                mod = d.group(1)
+        overview = (gold, ruby, mod, remaining)
+        self.log("Overview: (Gold, Ruby, Module, Time) = (%s, %s, %s, %s)." % overview)    
 
     def stable(self):
         def handler(http_result):
-            remaining = self.remain(http_result.content)
+            remaining = self.overview(http_result.content)
             if remaining >= 0:
                 return remaining
             return 3600
@@ -109,7 +146,7 @@ class GladiatusBot:
     
     def attack(self, player):
         def handler(http_result):
-            remaining = self.remain(http_result.content)
+            remaining = self.overview(http_result.content)
             if remaining >= 0:
                 return remaining
             if re.search(r'Ti.{1,4}p t.{1,4}c t.{1,4}i ph.{1,4}n Tin Nh.{1,4}n', http_result.content) is not None:
@@ -149,13 +186,13 @@ class GladiatusBot:
         """
         locations = ("Mist Mountains", "Dark Woods", "Barbarian Village", "Bandit Camp", "Acient Temple", "Pirate Harbour", "Wolf Cave")
         def handler(http_result):
-            ellapse = self.remain(http_result.content)
+            ellapse = self.overview(http_result.content)
             if ellapse == -1:
                 if centurion:
                     ellapse = 5 * 60
                 else:
                     ellapse = 10 * 60
-                self.log("Training at %s... Will wake up in 10 minutes next." % (locations[where - 1]))
+            self.log("Training at %s..." % (locations[where - 1]))
             return ellapse
 
         return self.invoke({
@@ -188,7 +225,7 @@ class GladiatusBot:
     
     def receive_quest(self):
         def handler(http_result):
-            remaining = self.remain(http_result.content)
+            remaining = self.overview(http_result.content)
             if remaining <= 0:
                 m = re.search('value="([^"]*)" name="dif3"', http_result.content)
                 if m is not None:
@@ -233,9 +270,9 @@ if __name__ == "__main__":
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
-        bot = GladiatusBot(server, username, password, False)
+        bot = GladiatusBot(server, username, password)
         bot.login()
-        bot.attack("")
+        bot.stable()
         
     except getopt.GetoptError:
         print 'What''s up?'

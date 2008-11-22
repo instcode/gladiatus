@@ -47,7 +47,7 @@ if __name__ == "__main__":
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
-        bot = TrainingBot(server, username, password, False)
+        bot = TrainingBot(server, username, password)
         bot.login()
         bot.work(quest)
         
