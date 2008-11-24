@@ -12,11 +12,12 @@ class GladiatusBot:
         self.centurion = False
         self.cookies = ""
         self.sh = ""
-        self.gold = 0
-        self.ruby = 0
-        self.work = [0, "00:00:00"]
-        self.arena = [0, "00:00:00"]
-        self.expedition = [0, "00:00:00"]
+        self.overview = None
+        #self.gold = 0
+        #self.ruby = 0
+        #self.work = [0, "00:00:00"]
+        #self.arena = [0, "00:00:00"]
+        #self.expedition = [0, "00:00:00"]
     
     def log(self, message):
         print '[' + time.strftime("%Y-%m-%d %H:%M:%S") + ']: ' + message 
@@ -54,9 +55,10 @@ class GladiatusBot:
             # Try to the execute service again
             return self.invoke(service_descriptor)
         try:
+            if len(self.sh) > 0:
+                self.overview = self.headlines(http_result)
             handler = service_descriptor['handler']
             if callable(handler):
-                self.overview(http_result.content)
                 return handler(http_result)
         except KeyError:
             pass
@@ -100,13 +102,13 @@ class GladiatusBot:
             Check whether this bot has premium account or not
         """
         def handler(http_result):
+            self.log("Overview: (Gold, Ruby, Module, Time) = (%s, %s, %s, %s)." % self.overview)
             m = re.search('(\d+) ng.{1,3}y c.{1,3}n l.{1,3}i', http_result.content)
             if m is not None:
                 self.centurion = True
                 self.log('%s day(s) of centurion left.' % (m.group(1)))
             else:
                 self.log('Not a centurion.')
-            self.overview(http_result.content)
         
         self.invoke({
                 "http_method": "GET",
@@ -114,28 +116,32 @@ class GladiatusBot:
                 "handler": handler
             })
 
-    def overview(self, content):
+    def headlines(self, http_result):
         mod = "none"
         remaining = (0, 0, 0, 0)
-        gold = re.search('<span class="charvaluesSub" id="sstat_gold_val">([\.0-9]+)</span>', content).group(1)
-        ruby = re.search('<span class="charvaluesSub" id="sstat_ruby_val">(\d+)</span>', content).group(1)
-        m = re.search("<span id='bx0'[^>]*>(\d\d):(\d\d):(\d\d).*document.location=([^;]*);", content)
-        if m is not None:
-            timeleft = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
-            remaining = (timeleft, "%s:%s:%s" % (m.group(1), m.group(2), m.group(3)))
-            d = re.search("'index.php?mod=([^&]*)&", m.group(4))
-            mod = "work"
-            if d is not None:
-                mod = d.group(1)
+        try:
+            gold = re.search('<span class="charvaluesSub" id="sstat_gold_val">([\.0-9]+)</span>', http_result.content).group(1)
+            ruby = re.search('<span class="charvaluesSub" id="sstat_ruby_val">(\d+)</span>', http_result.content).group(1)
+            m = re.search("<span id='bx0'[^>]*>(\d\d):(\d\d):(\d\d).*document.location=([^;]*);", http_result.content)
+            if m is not None:
+                timeleft = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+                remaining = (timeleft, "%s:%s:%s" % (m.group(1), m.group(2), m.group(3)))
+                d = re.search("'index.php?mod=([^&]*)&", m.group(4))
+                mod = "work"
+                if d is not None:
+                    mod = d.group(1)
+        except:
+            gold = 0
+            ruby = 0
+
         overview = (gold, ruby, mod, remaining)
-        self.log("Overview: (Gold, Ruby, Module, Time) = (%s, %s, %s, %s)." % overview)    
+        return overview   
 
     def stable(self):
         def handler(http_result):
-            remaining = self.overview(http_result.content)
-            if remaining >= 0:
-                return remaining
-            return 3600
+            remaining = self.overview[3][0]
+            self.log("Overview: (Gold, Ruby, Module, Time) = (%s, %s, %s, %s)." % self.overview)
+            return remaining
 
         return self.invoke({
                 "http_method": "POST",
@@ -146,11 +152,11 @@ class GladiatusBot:
     
     def attack(self, player):
         def handler(http_result):
-            remaining = self.overview(http_result.content)
-            if remaining >= 0:
+            remaining = self.overview[3][0]
+            if remaining > 0:
                 return remaining
             if re.search(r'Ti.{1,4}p t.{1,4}c t.{1,4}i ph.{1,4}n Tin Nh.{1,4}n', http_result.content) is not None:
-                return 3600
+                return 0
             return 5
 
         return self.invoke({
@@ -186,14 +192,9 @@ class GladiatusBot:
         """
         locations = ("Mist Mountains", "Dark Woods", "Barbarian Village", "Bandit Camp", "Acient Temple", "Pirate Harbour", "Wolf Cave")
         def handler(http_result):
-            ellapse = self.overview(http_result.content)
-            if ellapse == -1:
-                if centurion:
-                    ellapse = 5 * 60
-                else:
-                    ellapse = 10 * 60
+            remaining = self.overview[3][0]
             self.log("Training at %s..." % (locations[where - 1]))
-            return ellapse
+            return remaining
 
         return self.invoke({
                 "http_method": "GET",
@@ -225,7 +226,7 @@ class GladiatusBot:
     
     def receive_quest(self):
         def handler(http_result):
-            remaining = self.overview(http_result.content)
+            remaining = self.overview[3][0]
             if remaining <= 0:
                 m = re.search('value="([^"]*)" name="dif3"', http_result.content)
                 if m is not None:

@@ -23,6 +23,7 @@ class TrainingBot(GladiatusBot):
                 sleep = self.stable()
                 self.training_point += 1
             s.enter(sleep, 1, loop, ())
+            
         loop()
         while True:
             s.run()

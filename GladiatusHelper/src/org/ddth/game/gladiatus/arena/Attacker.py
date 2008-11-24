@@ -12,8 +12,9 @@ class Attacker(GladiatusBot):
         self.message = message
         s = sched.scheduler(time.time, time.sleep)
         def loop():
-            sleep = self.attack(self.player) - 2
-            if (sleep == 3600 - 2):
+            sleep = self.attack(self.player)
+            if (sleep == 0):
+                sleep = 3600
                 self.log("Attacked %s successfully... Take a rest in horse stable..." % (player))
                 self.stable()
                 self.send(player, message)
@@ -21,7 +22,7 @@ class Attacker(GladiatusBot):
                 self.log("Cannot attack %s! Will try again in next %s seconds!" % (player, sleep))
 
             if s.empty():
-                s.enter(sleep, 1, loop, ())
+                s.enter(sleep, 10, loop, ())
         loop()
         while True:
             s.run()
