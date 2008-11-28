@@ -6,34 +6,37 @@ import os, sys, re, sched, time, urllib, getopt
 from org.ddth.game.gladiatus.core.GladiatusBot import GladiatusBot
 
 class TrainingBot(GladiatusBot):
+    def where(self):
+        self.location += 1
+        if self.location > 7:
+            self.location = 1
+        return self.location
+    
     def work(self, quest):
-        self.where = 1
-        self.training_point = 12
-        s = sched.scheduler(time.time, time.sleep)
+        self.location = 0
         def loop():
-            self.stats(2)
+            sleep = 0
+            # Receive quest if it's available
             self.receive_quest()
-            if quest > 0 and self.training_point >= 2:
-                sleep = self.quest(self.where)
-                self.where += 1
-                if self.where > 7:
-                    self.where = 1
-                self.training_point -= 2
-            else:
-                sleep = self.stable()
-                self.training_point += 1
-            s.enter(sleep, 1, loop, ())
-            
+            # Try to get the number of expedition points left
+            if self.ongoing[2] != 'report': 
+                sleep = self.expedition(1, 0)
+            if sleep == 0:
+                if quest > 0 and self.expedition_point >= (self.max_point / 2):
+                    sleep = self.expedition(self.where(), 1)
+                else:
+                    sleep = self.stable()
+            self.sleep(sleep, loop)
+
+        # Start working
         loop()
-        while True:
-            s.run()
-        pass
+        self.run()
     
 if __name__ == "__main__":
     try:
         username = ""
         password = ""
-        quest = False
+        quest = 0
         opts, args = getopt.getopt(sys.argv[1:], "s:u:p:q:", ["server=", "username=", "password=", "quest="])
         for opt, arg in opts:
             if opt in ("-s", "--server"):
