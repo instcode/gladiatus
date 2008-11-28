@@ -21,11 +21,10 @@ class TrainingBot(GladiatusBot):
             # Try to get the number of expedition points left
             if self.ongoing[2] != 'report': 
                 sleep = self.expedition(1, 0)
-            if sleep == 0:
-                if quest > 0 and self.expedition_point >= (self.max_point / 2):
-                    sleep = self.expedition(self.where(), 1)
-                else:
-                    sleep = self.stable()
+            if quest > 0 and self.expedition_point >= (self.max_point / 2):
+                sleep = self.expedition(self.where(), 1)
+            else:
+                sleep = self.stable()
             self.sleep(sleep, loop)
 
         # Start working
