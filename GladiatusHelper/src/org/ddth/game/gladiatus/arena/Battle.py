@@ -83,7 +83,7 @@ class BattleV033(Battle):
         # Probability to hit
         if (probability <= attacker.chanceToHit):
             damage = attacker.damage;
-            hitpoints = damage[0] + randint(0, damage[1]);
+            hitpoints = randint(damage[0], damage[1]);
             defender.hp = defender.hp - hitpoints;
 
 class BattleV040(Battle):

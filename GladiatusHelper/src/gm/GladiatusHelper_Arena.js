@@ -48,7 +48,7 @@ function arenaSimulateFight(params) {
 
     GM_xmlhttpRequest({
 		method: "POST",
-		url: 'http://gladiatus-helper.appspot.com/simulate',
+		url: 'http://gladiatus-helper.appspot.com/simulate.py',
 		headers: {'Content-type':'application/x-www-form-urlencoded'},
 		data: encodeURI(data),
 		onload: function(responseDetails) {
