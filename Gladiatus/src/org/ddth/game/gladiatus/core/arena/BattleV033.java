@@ -41,7 +41,7 @@ public class BattleV033 extends Battle {
 		// Probability to hit
 		if (probability <= attacker.getChanceToHit()) {
 			Range damage = attacker.getDamage();
-			int hitpoints = damage.getMin() + rand.nextInt(damage.getMax());
+			int hitpoints = damage.getMin() + rand.nextInt(damage.getMax() - damage.getMin());
 			defender.setHealth(defender.getHealth() - hitpoints);
 		}
 	}
