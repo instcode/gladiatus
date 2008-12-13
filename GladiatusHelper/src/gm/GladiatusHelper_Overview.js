@@ -93,8 +93,8 @@ function getStats(params) {
 	});
 }
 
-function displayCharacterStats(stats) {
-	var str = '<table border="0" cellpadding="2" cellspacing="0" style="font-size:10px; border: 1px solid #c0c0c0;">';
+function createCharacterStatsHTML(stats) {
+	var str = '<table border="0" cellpadding="2" cellspacing="0" style="background:#d0d0ff; font-size:10px; border: 1px solid #c0c0c0;">';
 	str += '<tr><td colspan="2" align="center" style="border-bottom: 1px solid #c0c0c0; background: #e0e0e0"><b>'
 		+ stats[statsIndexCharname]+'</b></td></tr>';
 	str += '<tr><td align="left" style="border-bottom: 1px solid #c0c0c0;">Level</td><td align="right" style="border-bottom: 1px solid #c0c0c0;">'
@@ -120,7 +120,11 @@ function displayCharacterStats(stats) {
 		+stats[statsIndexAbsorbMin]+'-'+stats[statsIndexAbsorbMax]+'</td></tr>';
 	str += '<tr><td align="left">Damage</td><td align="right">'+stats[statsIndexDamage1]+'-'+stats[statsIndexDamage2]+'</td></tr>';
 	str += '</table>';
-	divCharStats.innerHTML = str;
+	return str;
+}
+
+function displayCharacterStats(stats) {
+	divCharStats.innerHTML = createCharacterStatsHTML(stats);
 }
 
 function displayOverview(stats) {

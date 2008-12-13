@@ -83,8 +83,27 @@ function showFightResult(params, chanceToWin, dmgDone, dmgReceived) {
 	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
 	var el = document.createElement('a');
 	el.href = urlMucNo;
+	htm = ""
+	if (typeof unsafeWindow.ttDelay != 'undefined') {
+		el.addEventListener('mouseover', function(event) {
+			target = el;
+			unsafeWindow.tt_Show(event, opponentStats[statsIndexCharname],
+				(typeof target.T_ABOVE != unsafeWindow.tt_u),
+				50,
+				false,
+				true,
+				((typeof target.T_OFFSETX != unsafeWindow.tt_u)? target.T_OFFSETX : unsafeWindow.ttOffsetX),
+				((typeof target.T_OFFSETY != unsafeWindow.tt_u)? target.T_OFFSETY : unsafeWindow.ttOffsetY),
+				false,
+				false);
+	    }, false);
+		el.addEventListener('mouseout', function(event) {
+			unsafeWindow.tt_Hide();
+		}, false);
+		htm = unsafeWindow.tt_Htm("", opponentStats[statsIndexCharname], createCharacterStatsHTML(opponentStats));
+	}
 	el.innerHTML = '<small><font color='+color+'>(Lvl ' +opponentStats[statsIndexLevel] 
 		+ '/HP ' + opponentStats[statsIndexHPCurrent] + '/' 
-		+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceived+'</font>)</font></small>';
+		+ chanceToWin+'%|<font color="#0000ff">'+dmgDone+'</font>|<font color="#ff0000">'+dmgReceived+'</font>)</font></small>' + htm;
 	objOpponent.parentNode.appendChild(el);
 }
