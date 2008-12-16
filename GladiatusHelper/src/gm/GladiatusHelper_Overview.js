@@ -91,10 +91,12 @@ function getStats(params) {
 			stats[statsIndexExpCurrent] = parseInt(regexpResult[1]);
 			stats[statsIndexExpMax]     = parseInt(regexpResult[2]);
 			
-			var defenceStr = getDivAttribute(pulled, 'char_panzer_tt', 'id', 'onMouseOver');
-			var regexp = /nowrap=\\'nowrap\\'>(\d+)/;
-			var regexpResult = defenceStr.match(regexp);
-			alert(regexpResult.length);
+			//var obj = getDivAttribute(pulled, 'char_panzer_tt', 'id', 'onMouseOver'); char_panzer
+			
+			//var defenceStr = getDivAttribute(pulled, 'char_panzer_tt', 'id', 'onMouseOver');
+			//var regexp = /nowrap=\\'nowrap\\'>(\d+)/;
+			//var regexpResult = defenceStr.match(regexp);
+			//alert(regexpResult.length);
 			//var regexp = /Khả năng hồi phục:.*?>(\d+)/;
 			//var regexpResult = defenceStr.match(regexp);
 			//stats[statsValueAvoidCrit] = parseInt(regexpResult[1]);
