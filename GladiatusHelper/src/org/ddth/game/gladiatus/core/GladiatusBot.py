@@ -120,7 +120,7 @@ class GladiatusBot:
         """
         def handler(http_result):
             try:
-                self.sh = re.search('sh=([^&]*)&web_redirected=1', http_result.content).group(1)
+                self.sh = re.search('sh=([^&]*)&login=1&web_redirected=1', http_result.content).group(1)
                 self.cookies = re.search('(Gladiatus=[^;,]*;) expire', http_result.headers['set-cookie']).group(1)
                 # Do a redirect as if it's a normal user, well-behaved bot ;-)
                 self.invoke({
