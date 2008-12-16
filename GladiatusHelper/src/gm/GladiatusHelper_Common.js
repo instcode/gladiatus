@@ -4,6 +4,8 @@
  *
  * @copyright (C) 2008, DDTH.ORG
  * @history
+ *   2008.12.16
+ *     - Giadiatus.vn upgraded to v0.4
  *   2008.08.28
  *     - First version
  */
@@ -39,6 +41,7 @@ window.addEventListener("scroll", alignStatus, false);
 
 //setting up
 var siteUrl;
+var siteUrlAjax;
 var siteMod;
 var secureHash;
 var urlOverview;
@@ -54,6 +57,8 @@ var currentTime = new Date();
 var regexp = /^(.*\?)mod=(\w+).*sh=([0-9a-fA-F]+)/;
 var result = document.location.href.match(regexp);
 var siteUrl = result[1];
+var siteUrlAjax = result[1].substring(0, result[1].length-"index.php?".length) + 'ajax/';
+alert(siteUrlAjax);
 var siteMod = result[2];
 var secureHash = result[3];
 
