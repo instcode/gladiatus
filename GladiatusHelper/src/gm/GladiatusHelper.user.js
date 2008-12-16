@@ -16,13 +16,15 @@
 
 /**
  * Based on script "Gladiatus Arena"  by m4rtini (http://userscripts.org/scripts/show/23065)
- * @version   v0.3.3.6 - 2008.09.10
+ * @version   v4.0.1 - 2008.12.16
  * @author    NGUYEN, Ba Thanh <btnguyen2k [at] gmail [dot] com>
  * @author    Tuan Duong <bacduong [at] gmail [dot] com>
  * @author    NGUYEN, Xuan Khoa <instcode [at] gmail [dot] com>
  * @author    DUONG, Thien Duc <duongthienduc [at] gmail [dot] com>
  * @copyright DDTH.ORG
  * @history
+ * v4.0.1 2008.12.16
+ *  - Gladiatus.vn upgraded to v0.4
  * v3.3.8 2008.10.16
  *   - Add auction item level.
  * v3.3.7 2008.10.13
