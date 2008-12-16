@@ -174,7 +174,7 @@ class GladiatusBot:
     
     def attack(self, player, bashing = False):
         def handler(http_result):
-            if re.search(r'Ti.{1,4}p t.{1,4}c t.{1,4}i ph.{1,4}n Tin Nh.{1,4}n', http_result.content) is not None:
+            if re.search(r"document.location.href = 'index.php[^;]*;", http_result.content) is not None:
                 self.log("Attacked %s successfully..." % (player))
                 self.victims[player] = time.time() + 6*3600
                 if bashing:
@@ -198,9 +198,8 @@ class GladiatusBot:
                 return False
 
         return self.invoke({
-                "http_method": "POST",
-                "http_url": 'http://%s/game/index.php?mod=arena&sh=%s' % (self.server, self.sh),
-                "http_form": {"ujn": player},
+                "http_method": "GET",
+                "http_url": 'http://%s/game/ajax/doArenaFight.php?dname=%s' % (self.server, player),
                 "handler": handler
             })
     
