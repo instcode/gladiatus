@@ -88,14 +88,13 @@ function getStats(params) {
 			var expStr = getDivAttribute(pulled, 'char_exp_tt', 'id', 'onMouseOver');
 			var regexp = /.*?(\d+)\s*\/\s*(\d+)/;
 			var regexpResult = expStr.match(regexp);
-			alert(regexpResult);
 			stats[statsIndexExpCurrent] = parseInt(regexpResult[1]);
 			stats[statsIndexExpMax]     = parseInt(regexpResult[2]);
 			
 			var defenceStr = getDivAttribute(pulled, 'char_panzer_tt', 'id', 'onMouseOver');
 			var regexp = /nowrap=\\'nowrap\\'>(\d+)/;
 			var regexpResult = defenceStr.match(regexp);
-			alert(regexpResult);
+			alert(regexpResult.length);
 			//var regexp = /Khả năng hồi phục:.*?>(\d+)/;
 			//var regexpResult = defenceStr.match(regexp);
 			//stats[statsValueAvoidCrit] = parseInt(regexpResult[1]);
