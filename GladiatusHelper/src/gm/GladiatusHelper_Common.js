@@ -11,7 +11,7 @@
  */
 
 /*********** SETTING UP ***********/
-var STATUS = 'Gladiatus Helper v0.3.3.5<br>';
+var STATUS = 'Gladiatus Helper v0.4.0.1<br>';
 var divPanel = document.createElement('div');
 divPanel.setAttribute('id', 'gladiatusPanel');
 divPanel.setAttribute('style', 'font-size:10px; background:#d0d0ff; border:solid black 1px; padding:4px; position: absolute; top: 0px');
