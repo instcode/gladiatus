@@ -25,6 +25,7 @@ application = webapp.WSGIApplication(
                         ('/', Home),
                         ('/auction.py', AuctionWatcher),
                         ('/simulate.py', Simulator),
+                        ('/simulate', Simulator),
                         ('/ask/(.*).py', DecisionHelper),
                     ],
                     debug=True)
