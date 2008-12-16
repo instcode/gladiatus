@@ -88,6 +88,7 @@ function getStats(params) {
 			var expStr = getDivAttribute(pulled, 'char_exp_tt', 'id', 'onMouseOver');
 			var regexp = /.*?(\d+)\s*\/\s*(\d+)/;
 			var regexpResult = expStr.match(regexp);
+			alert(regexpResult);
 			stats[statsIndexExpCurrent] = parseInt(regexpResult[1]);
 			stats[statsIndexExpMax]     = parseInt(regexpResult[2]);
 			
