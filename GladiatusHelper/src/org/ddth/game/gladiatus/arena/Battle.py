@@ -3,10 +3,14 @@ from org.ddth.game.gladiatus.core.GladiatusModel import Character
     
 class Gladiator:
     def __init__(self):
-        self.hp = 0;
-        self.damage = [0, 0];
-        self.chanceToHit = 0;
-        self.chanceToDoubleHit = 0;
+        self.hp = 0
+        self.normal_damage = [0, 0]
+        self.critical_damage = [0, 0]
+        self.chanceToHit = 0
+        self.chanceToDoubleHit = 0
+        self.chanceToBlockAHit = 0
+        self.chanceForCriticalDamage = 0
+        self.chanceToAvoidCriticalHits = 0
 
 class Battle:
 
@@ -29,12 +33,22 @@ class Battle:
         gladiator = Gladiator();
         absorb = self.getAbsorbableDamage(opponent.armor);
         damage = friend.damage;
-        minDamage = damage[0] - absorb[1];
-        maxDamage = damage[1] - absorb[0];
-        # Update net damage
-        gladiator.damage = [max(0, minDamage), max(0, maxDamage)];
+        
+        minNormalDamage = damage[0] - absorb[1]
+        maxNormalDamage = damage[1] - absorb[0]
+        gladiator.normal_damage = [max(0, minNormalDamage), max(0, maxNormalDamage)];
+        
+        minCriticalDamage = 2 * damage[0] - absorb[1]
+        maxCriticalDamage = 2 * damage[1] - absorb[0]
+        gladiator.critical_damage = [max(0, minCriticalDamage), max(0, maxCriticalDamage)];
+        
         gladiator.chanceToHit = max(0, chanceToHit);
         gladiator.chanceToDoubleHit = max(0, chanceToDoubleHit);
+        
+        level_factor = 52.0 / max(friend.level - 8, 2)
+        gladiator.chanceToBlockAHit = min(90, round(friend.blocking * level_factor / 4))
+        gladiator.chanceForCriticalDamage = min(90, round(friend.critical * level_factor / 5))
+        gladiator.chanceToAvoidCriticalHits = min(90, round(friend.resilience * level_factor / 3))
         return gladiator;
 
 class BattleV033(Battle):
@@ -82,7 +96,7 @@ class BattleV033(Battle):
         probability = randint(0, 100);
         # Probability to hit
         if (probability <= attacker.chanceToHit):
-            damage = attacker.damage;
+            damage = attacker.normal_damage;
             hitpoints = randint(damage[0], damage[1]);
             defender.hp = defender.hp - hitpoints;
 
@@ -131,12 +145,21 @@ class BattleV040(Battle):
             self.attack(attacker, defender);
 
     def attack(self, attacker, defender):
-        probability = randint(0, 100);
-        # Probability to hit
-        if (probability <= attacker.chanceToHit):
-            damage = attacker.damage;
-            hitpoints = damage[0] + randint(0, damage[1]);
-            defender.hp = defender.hp - hitpoints;
+        chanceToHitNormalDamage = attacker.chanceToHit * (100 - defender.chanceToBlockAHit) / 100.0
+        chanceToHitCriticalDamage = chanceToHitNormalDamage * attacker.chanceForCriticalDamage * (100 - defender.chanceToAvoidCriticalHits) / 10000.0
+        
+        damage = [0, 0]
+        probability_to_hit_critical_damage = randint(0, 100);
+        if probability_to_hit_critical_damage <= chanceToHitCriticalDamage:
+            damage = attacker.critical_damage
+            pass
+        else:
+            probability_to_hit_normal_damage = randint(0, 100);
+            if probability_to_hit_normal_damage <= chanceToHitNormalDamage:
+                damage = attacker.normal_damage;
+        
+        hitpoints = randint(damage[0], damage[1]);
+        defender.hp = defender.hp - hitpoints;
             
 def simulate(version, challenger, defender, count):
     if (version == "0.3.3"):

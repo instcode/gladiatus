@@ -13,24 +13,23 @@ class Simulator(webapp.RequestHandler):
     def populate(self, player):
         try:
             id = self.request.get('gladiator' + player, default_value = 'gladiator');
-            level = int(self.request.get('level' + player));
+            level = int(self.request.get('level' + player, default_value = '1'));
             hp = int(self.request.get('hitpoint' + player, default_value = '100000'));
-            agility = int(self.request.get('agility' + player));
-            armor = int(self.request.get('armour' + player));
-            charisma = int(self.request.get('charisma' + player));
-            skill = int(self.request.get('skill' + player));
-            damage = [int(self.request.get('damage1' + player)), int(self.request.get('damage2' + player))];
+            strength = int(self.request.get('strength' + player, default_value = '5'));
+            agility = int(self.request.get('agility' + player, default_value = '5'));
+            armor = int(self.request.get('armour' + player, default_value = '0'));
+            charisma = int(self.request.get('charisma' + player, default_value = '5'));
+            skill = int(self.request.get('skill' + player, default_value = '5'));
+            constitution = int(self.request.get('constitution' + player, default_value = '5'));
+            intelligence = int(self.request.get('intelligence' + player, default_value = '5'));
+            resilience = int(self.request.get('resilience' + player, default_value = '0'));
+            blocking = int(self.request.get('blocking' + player, default_value = '0'));
+            critical = int(self.request.get('critical' + player, default_value = '10'));
+            damage = [int(self.request.get('damage1' + player, default_value = '0')),
+                      int(self.request.get('damage2' + player, default_value = '2'))];
+            character = Character(id, id, level, hp, 0, strength, skill, agility, constitution, charisma, armor, intelligence, damage, resilience, blocking, critical)
         except:
-            id = "gladiator";
-            level = 0;
-            hp = 100000;
-            agility = 0;
-            armor = 0;
-            charisma = 0;
-            skill = 0;
-            damage = [0, 2];
-            pass
-        character = Character(id, id, level, hp, 0, 0, skill, agility, 0, charisma, armor, 0, damage);
+            character = Character("gladiator", "gladiator", 1, 0, 0, 5, 5, 5, 5, 5, 0, 5, [0, 2], 0, 0, 10);
         return character;
     
     def get(self):
@@ -39,7 +38,7 @@ class Simulator(webapp.RequestHandler):
         self.response.out.write(template.render(path, context))
         
     def post(self):
-        version = self.request.get('version', default_value = '0.3.3');
+        version = self.request.get('version', default_value = '0.4.0');
         count = int(self.request.get('count'));
         if (count > 300):
             count = 300;                        
