@@ -7,29 +7,25 @@ from org.ddth.game.gladiatus.core.GladiatusBot import GladiatusBot
 
 class Attacker(GladiatusBot):
     
-    def strike(self, player, message):
+    def strike(self, player):
         self.player = player
-        self.message = message
         s = sched.scheduler(time.time, time.sleep)
         def loop():
-            sleep = self.attack(self.player)
-            if (sleep == 0):
-                sleep = 3600
-                self.log("Attacked %s successfully... Take a rest in horse stable..." % (player))
+            if self.attack(self.player):
                 self.stable()
-                self.send(player, message)
+                sleep = self.seconds("work")
             else:
-                self.log("Cannot attack %s! Will try again in next %s seconds!" % (player, sleep))
+                sleep = max(self.seconds("arena"), self.seconds("work"))
+                if sleep == 0:
+                    sleep = 5
+            self.sleep(sleep, loop)
 
-            if s.empty():
-                s.enter(sleep, 10, loop, ())
         loop()
-        while True:
-            s.run()
+        self.run()
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "u:p:v:m:", ["username=", "password=", "victim=", "message="])
+        opts, args = getopt.getopt(sys.argv[1:], "u:p:v:", ["username=", "password=", "victim="])
         message = ""
         for opt, arg in opts:
             if opt in ("-u", "--username"):
@@ -38,19 +34,16 @@ if __name__ == "__main__":
                 password = arg
             elif opt in ("-v", "--victim"):
                 victim = arg
-            elif opt in ("-m", "--message"):
-                message = arg
 
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
         attacker = Attacker("s1.gladiatus.vn", username, password);
         attacker.login()
-        attacker.strike(victim, message);
+        attacker.strike(victim);
 
     except getopt.GetoptError:
         print 'Usage: Attacker.py -u<username> -p<password> -v<victim>'
         print '-u, --username\t Username'
         print '-p, --password\t Password'
         print '-v, --victim\t Victim'
-        print '-m, --message\t Message'

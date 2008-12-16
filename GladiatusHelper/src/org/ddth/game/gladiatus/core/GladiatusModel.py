@@ -16,7 +16,7 @@ class GladiatusCustomer(db.Model):
         self.last_update = db.DateTimeProperty();
 
 class Character:
-    def __init__(self, id, name, level, hp, xp, strength, skill, agility, constitution, charisma, armor, intelligent, damage):
+    def __init__(self, id, name, level, hp, xp, strength, skill, agility, constitution, charisma, armor, intelligence, damage, resilience, blocking, critical):
         self.id = id;
         self.name = name;
         self.level = level;
@@ -28,5 +28,8 @@ class Character:
         self.constitution = constitution;
         self.charisma = charisma;
         self.armor = armor;
-        self.intelligent = intelligent;
+        self.intelligence = intelligence;
         self.damage = damage;
+        self.resilience = resilience
+        self.blocking = blocking
+        self.critical = critical

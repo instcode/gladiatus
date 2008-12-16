@@ -2,7 +2,8 @@ from google.appengine.api import urlfetch
 from google.appengine.api import apiproxy_stub_map
 from google.appengine.api import urlfetch_stub
 
-import os, sys, re, sched, time, urllib, getopt, exceptions
+import os, sys, re, sched, time, urllib, getopt, random, exceptions
+from org.ddth.game.gladiatus.core.BeautifulSoup import BeautifulSoup
 
 class GladiatusBot:
     def __init__(self, server, username, password):
@@ -19,21 +20,34 @@ class GladiatusBot:
         self.centurion = False
         self.expedition_point = 0
         self.max_point = 12
-        self.arena = [0, "00:00:00"]
-        self.ongoing = [0, "00:00:00", "none"]
+        self.endings = {'arena': 0, 'work': 0, 'report': 0, 'tavern': 0, 'inventory': 0, 'auction': 0}
+        self.victims = {}
     
     def sleep(self, duration, wake):
         self.log("Level: %s, Gold: %s, Ruby: %s" % (self.level, self.gold, self.ruby))
-        self.log("Arena: %s, Ongoing: %s" % (self.arena, self.ongoing))
+        self.log("Arena: %s, Work: %s, Expedition: %s" % (self.seconds("arena"), self.seconds("work"), self.seconds("report")))
         if duration <= 0:
-            duration = self.ongoing[0]
+            duration = max(self.seconds("work"), self.seconds("report"))
         self.s.enter(duration, 1, wake, ())
         self.log("Will wake up in %s seconds" % (duration))
-        #self.expedition_point += 1
-        
+
     def run(self):
         self.s.run()
     
+    def save(self, which, value):
+        self.endings[which] = time.time() + value
+    
+    def seconds(self, which):
+        return max(0, self.endings[which] - time.time())
+    
+    def format(secs):
+        mins, secs = divmod(secs, 60)
+        hours, mins = divmod(mins, 60)
+        return '%02d:%02d:%02d' % (hours, mins, secs)
+
+    def end(self, which):
+        return time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(self.endings[which]))
+   
     def log(self, message):
         print '[' + time.strftime("%Y-%m-%d %H:%M:%S") + ']: ' + message 
 
@@ -71,32 +85,28 @@ class GladiatusBot:
             return self.invoke(service_descriptor)
         try:
             if len(self.sh) > 0:
-                self.headlines(http_result)
+                self.overview(http_url, http_result)
             handler = service_descriptor['handler']
             if callable(handler):
                 return handler(http_result)
         except KeyError:
             pass
-        return -1
+        return True
 
-    def headlines(self, http_result):
-        mod = "none"
+    def overview(self, http_url, http_result):
         try:
+            self.soup = BeautifulSoup(http_result.content)
+            mod = re.search('mod=([^&]*)', http_url).group(1)
             self.gold = re.search('<span class="charvaluesSub" id="sstat_gold_val">([\.0-9]+)</span>', http_result.content).group(1)
             self.ruby = re.search('<span class="charvaluesSub" id="sstat_ruby_val">(\d+)</span>', http_result.content).group(1)
             self.level = re.search('<span class="charvaluesPre">Level:</span><span class="charvaluesSub">(\d+)</span>', http_result.content).group(1)
-            
             m = re.search("<span id='bx0'[^>]*>(\d\d):(\d\d):(\d\d).*document.location=([^;]*);", http_result.content)
             if m is not None:
-                timeleft = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+                second = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3))
                 d = re.search("'index.php\?mod=([^&]*)&", m.group(4))
-                mod = "work"
                 if (d is not None):
                     mod = d.group(1)
-                if mod == 'arena':
-                    self.arena = [timeleft, "%s:%s:%s" % (m.group(1), m.group(2), m.group(3))]
-                else:
-                    self.ongoing = [timeleft, "%s:%s:%s" % (m.group(1), m.group(2), m.group(3)), mod]
+                self.save(mod, second)
         except:
             pass
 
@@ -141,7 +151,7 @@ class GladiatusBot:
                 self.log('%s day(s) of centurion left.' % (m.group(1)))
             else:
                 self.log('Not a centurion.')
-        
+
         self.invoke({
                 "http_method": "GET",
                 "http_url": 'http://%s/game/index.php?mod=premium&submod=rubies&sh=%s' % (self.server, self.sh),
@@ -150,9 +160,10 @@ class GladiatusBot:
 
     def stable(self):
         def handler(http_result):
-            if self.ongoing[2] == 'work':
+            if self.seconds('work') > 0:
                 self.log("Take a rest in horse stable...")
-            return self.ongoing[0]
+                return True
+            return False
 
         return self.invoke({
                 "http_method": "POST",
@@ -161,14 +172,30 @@ class GladiatusBot:
                 "handler": handler
             })
     
-    def attack(self, player):
+    def attack(self, player, bashing = False):
         def handler(http_result):
-            remaining = max(self.ongoing[0], self.arena[0])
-            if remaining > 0:
-                return remaining
             if re.search(r'Ti.{1,4}p t.{1,4}c t.{1,4}i ph.{1,4}n Tin Nh.{1,4}n', http_result.content) is not None:
-                return 0
-            return 5
+                self.log("Attacked %s successfully..." % (player))
+                self.victims[player] = time.time() + 6*3600
+                if bashing:
+                    next = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(self.victims[player]))
+                    self.log("Will try to attack %s again on %s" % (player, next))
+                return True
+
+            if re.search('b.{1,4}n th.{1,4}p h.{1,4}n 25 .{1,4}i.{1,4}m', http_result.content) is not None:
+                self.log("Cannot attack %s because bot's HP is lower than 25.." % (player))
+                self.save("arena", 15)
+            elif re.search('K.{1,4} th.{1,4} c.{1,4}a b.{1,4}n v.{1,4}a tr.{1,4}i qua 1 cu.{1,4}c .{1,4}.{1,4}u', http_result.content) is not None:
+                self.log("Cannot attack %s because your enemy has just been attacked..." % (player))
+            elif re.search('K.{1,4} th.{1,4} c.{1,4}a b.{1,4}n qu.{1,4} y.{1,4}u .{1,4}u.{1,4}i', http_result.content) is not None:
+                self.log("Cannot attack %s because your enemy is too weak..." % (player))
+            else:
+                self.log("Cannot attack %s because of ongoing task..." % (player))
+            return False
+
+        if self.victims.has_key(player):
+            if bashing and time.time() <= self.victims[player]:
+                return False
 
         return self.invoke({
                 "http_method": "POST",
@@ -187,47 +214,54 @@ class GladiatusBot:
                 "http_form": {"data1": player, "betreff": message, "text": "", "submod": "new"},
                 "handler": ""
             })
-    
-    def bid(self, item_id, price):
-        pass
 
-    def expedition(self, where, do):
+    def expedition(self, where = 0):
         """
         Mist Mountains: 1 - Harpy (Nguoi dan ba la loi), Medusa (Nguoi ran), Cerberus (Cho 3 dau), Minotaur (Qui dau trau)
         Dark Woods: 2 - Harpy, Medusa, Cerberus, Minotaur, Hog (?), Leopard (Bao), Bear (Gau), Wolf (Soi), Deserter (Ke dao ngu), Traditor (?), Rebel (Ke phien loan), Heretic (?)
         Barbarian Village: 3 - Barbarian (Ke man ro), Berserk (Ke dien loan), Vandal (Ke pha hoai), Deserter, Traditor, Rebel, Heretic"
         Bandit Camp: 4 - Bandit (Tho phi), Fled Slave (No le bo tron), Robber (Ke cuop), Out Law (Ke ngoai vong phap luat), Deserter, Traditor, Rebel, Heretic
-        Acient Temple: 5 - Guard (Bao ve), Body Guard (Linh gac), Mercenary (?), Constable (?), Deserter, Traditor, Rebel, Heretic
+        Ancient Temple: 5 - Guard (Bao ve), Body Guard (Linh gac), Mercenary (?), Constable (?), Deserter, Traditor, Rebel, Heretic
         Pirate Harbour: 6 - Pirate (Cuop bien), Smuggler (Ke buon lau), Deserter, Traditor, Rebel, Heretic
         Wolf Cave: 7 - Wolf, Deserter, Traditor, Rebel, Heretic
         """
-        locations = ("Mist Mountains", "Dark Woods", "Barbarian Village", "Bandit Camp", "Acient Temple", "Pirate Harbour", "Wolf Cave")
-        def handler(http_result):
-            points = re.search('<label for="mjz">[^:]*: (\d+) / (\d+)</label>', http_result.content)
-            if points is not None:
-                self.expedition_point = int(points.group(1))
-                self.max_point = int(points.group(2))
-                self.log("Expedition point: %s / %s" % (self.expedition_point, self.max_point))
-
-                if do == 1:
-                    def quest(http_result):
-                        self.log("Training at %s location..." % (locations[where - 1]))
-                        return self.ongoing[0]
-                    
+        locations = ("Mist Mountains", "Dark Woods", "Barbarian Village", "Bandit Camp", "Ancient Temple", "Pirate Harbour", "Wolf Cave")
+        if where > 0:
+            def quest(http_result):
+                analyze = re.search('mod=quest&submod=analyze', http_result.content)
+                if analyze is not None:
                     return self.invoke({
-                        "http_method": "GET",
-                        "http_url": 'http://%s/game/index.php?mod=location&loc=%d&d=1&sh=%s' % (self.server, where, self.sh),
+                        "http_method": "POST",
+                        "http_form": {"analyze": 1, "loc": where},
+                        "http_url": 'http://%s/game/index.php?mod=quest&submod=analyze&sh=%s' % (self.server, self.sh),
                         "handler": quest
                     })
-            else:
-                self.log("Hey: (%d, %s, %s)!" % (self.ongoing[0], self.ongoing[1], self.ongoing[2]))
-            return self.ongoing[0]
+                elif self.seconds("report") > 0:
+                    self.log("Training at %s location..." % (locations[where - 1]))
+                    return True
+                return False
             
-        return self.invoke({
+            return self.invoke({
                 "http_method": "GET",
-                "http_url": 'http://%s/game/index.php?mod=location&loc=%d&sh=%s' % (self.server, where, self.sh),
-                "handler": handler
+                "http_url": 'http://%s/game/index.php?mod=location&loc=%d&d=1&sh=%s' % (self.server, where, self.sh),
+                "handler": quest
             })
+        else:
+            def handler(http_result):
+                points = re.search('<label for="mjz">[^:]*: (\d+) / (\d+)</label>', http_result.content)
+                if points is not None:
+                    self.expedition_point = int(points.group(1))
+                    self.max_point = int(points.group(2))
+                    self.log("Expedition point: %s / %s" % (self.expedition_point, self.max_point))
+                else:
+                    self.log("Cannot get the expedition points right now...")
+            
+            where = random.randint(1, 7);
+            return self.invoke({
+                    "http_method": "GET",
+                    "http_url": 'http://%s/game/index.php?mod=location&loc=%d&sh=%s' % (self.server, where, self.sh),
+                    "handler": handler
+                })
         
     def stats(self, which):
         """
@@ -253,17 +287,15 @@ class GladiatusBot:
     
     def receive_quest(self):
         def handler(http_result):
-            remaining = self.ongoing[0]
-            if remaining <= 0:
-                m = re.search('value="([^"]*)" name="dif3"', http_result.content)
-                if m is not None:
-                    return self.invoke({
-                        "http_method": "POST",
-                        "http_url": 'http://%s/game/index.php?mod=tavern&sh=%s' % (self.server, self.sh),
-                        "http_form": {"dif3": m.group(1)},
-                        "handler": lambda: self.log("Received quest successfully...") 
-                    })
-            return remaining
+            m = re.search('value="([^"]*)" name="dif3"', http_result.content)
+            if m is not None:
+                return self.invoke({
+                    "http_method": "POST",
+                    "http_url": 'http://%s/game/index.php?mod=tavern&sh=%s' % (self.server, self.sh),
+                    "http_form": {"dif3": m.group(1)},
+                    "handler": lambda http_result: self.log("Received quest successfully...") 
+                })
+            return True
     
         return self.invoke({
                 "http_method": "GET",
@@ -293,9 +325,17 @@ if __name__ == "__main__":
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
-        bot = GladiatusBot(server, username, password)
-        bot.login()
-        bot.stable()
+        content = "http://s1.gladiatus.vn/game/index.php?mod=report&beid=2085953&sh=705d15ac254dcd758185fcd90a3e6f56"
+        m = re.search('mod=([^&]*)', content)
+        print m.group(1)
+        content = "http://s1.gladiatus.vn/game/index.php?beid=2085953&sh=705d15ac254dcd758185fcd90a3e6f56&mod=login"
+        m = re.search('mod=([^&]*)', content)
+        print m.group(1)
+        #strftime('%H:%M.%S')
+
+        #bot = GladiatusBot(server, username, password)
+        #bot.login()
+        #bot.stable()
         
     except getopt.GetoptError:
         print 'What''s up?'
