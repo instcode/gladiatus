@@ -13,7 +13,6 @@ class GladiatusBot:
         self.password = password
         self.cookies = ""
         self.sh = ""
-        
         self.level = 0
         self.gold = 0
         self.ruby = 0
@@ -79,7 +78,9 @@ class GladiatusBot:
 
         domain = '.'.join(self.server.split('.')[1:])
         # Re-login if needs
-        if (re.search('"http://%s/game/index.php.mod=login"' % (domain), http_result.content) is not None):
+        ajaxFailure = re.search('document.location.href=document.location.href;', http_result.content) is not None
+        generalFailure = re.search('"http://%s/game/index.php.mod=login"' % (domain), http_result.content) is not None
+        if ajaxFailure or generalFailure:
             self.login()
             # Try to the execute service again
             return self.invoke(service_descriptor)
@@ -122,11 +123,6 @@ class GladiatusBot:
             try:
                 self.sh = re.search('sh=([^&]*)&login=1&web_redirected=1', http_result.content).group(1)
                 self.cookies = re.search('(Gladiatus=[^;,]*;) expire', http_result.headers['set-cookie']).group(1)
-                # Do a redirect as if it's a normal user, well-behaved bot ;-)
-                self.invoke({
-                        "http_method": "GET",
-                        "http_url": 'http://%s/game/index.php?mod=overview&sh=%s&web_redirected=1' % (self.server, self.sh),
-                    })
                 self.log("%s logged in %s successfully." % (self.username, self.server));
                 self.authorize()
             except:
@@ -157,7 +153,22 @@ class GladiatusBot:
                 "http_url": 'http://%s/game/index.php?mod=premium&submod=rubies&sh=%s' % (self.server, self.sh),
                 "handler": handler
             })
-
+    
+    def logon(self):
+        self.login()
+        self.invoke({
+                "http_method": "GET",
+                "http_url": 'http://%s/game/index.php?mod=work&sh=%s' % (self.server, self.sh),
+            })
+        self.invoke({
+                "http_method": "GET",
+                "http_url": 'http://%s/game/index.php?mod=arena&sh=%s' % (self.server, self.sh),
+            })
+        self.invoke({
+                "http_method": "GET",
+                "http_url": 'http://%s/game/index.php?mod=tavern&sh=%s' % (self.server, self.sh),
+            })
+        
     def stable(self):
         def handler(http_result):
             if self.seconds('work') > 0:
@@ -173,29 +184,32 @@ class GladiatusBot:
             })
     
     def attack(self, player, bashing = False):
+        if self.victims.has_key(player):
+            if bashing and time.time() <= self.victims[player] + 6*3600:
+                return False
+
         def handler(http_result):
-            if re.search(r"document.location.href = 'index.php[^;]*;", http_result.content) is not None:
+            if re.search(r"document.location.href = '(index.php[^;]*)';", http_result.content) is not None:
                 self.log("Attacked %s successfully..." % (player))
-                self.victims[player] = time.time() + 6*3600
+                self.victims[player] = time.time()
                 if bashing:
                     next = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(self.victims[player]))
                     self.log("Will try to attack %s again on %s" % (player, next))
                 return True
 
             if re.search('b.{1,4}n th.{1,4}p h.{1,4}n 25 .{1,4}i.{1,4}m', http_result.content) is not None:
-                self.log("Cannot attack %s because bot's HP is lower than 25.." % (player))
+                self.log("Cannot attack %s because bot's HP is lower than 25." % (player))
                 self.save("arena", 15)
             elif re.search('K.{1,4} th.{1,4} c.{1,4}a b.{1,4}n v.{1,4}a tr.{1,4}i qua 1 cu.{1,4}c .{1,4}.{1,4}u', http_result.content) is not None:
-                self.log("Cannot attack %s because your enemy has just been attacked..." % (player))
+                self.log("Cannot attack %s because your enemy has just been attacked" % (player))
             elif re.search('K.{1,4} th.{1,4} c.{1,4}a b.{1,4}n qu.{1,4} y.{1,4}u .{1,4}u.{1,4}i', http_result.content) is not None:
-                self.log("Cannot attack %s because your enemy is too weak..." % (player))
+                self.log("Cannot attack %s because your enemy is too weak." % (player))
+                self.save("arena", 15)
+            elif re.search(r'document.location.href="(index.php[^;]*)";', http_result.content) is not None:
+                self.log("Cannot attack %s because you are working at horse stable." % (player))
             else:
-                self.log("Cannot attack %s because of ongoing task..." % (player))
+                self.log("Cannot attack %s because you have just attacked someone in arena." % (player))
             return False
-
-        if self.victims.has_key(player):
-            if bashing and time.time() <= self.victims[player]:
-                return False
 
         return self.invoke({
                 "http_method": "GET",
