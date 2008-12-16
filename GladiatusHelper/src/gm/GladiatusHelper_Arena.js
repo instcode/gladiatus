@@ -82,7 +82,7 @@ function showFightResult(params, chanceToWin, dmgDone, dmgReceived) {
 	var result = objOpponent.href.match(regexp);
 	//var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
 	var urlMucNo = siteUrlAjax + 'doArenaFight.php?dname=' + encodeURIComponent(opponentStats['statsIndexCharname'])
-		+ '&a=' + new Date().getTime());
+			+ '&a=' + new Date().getTime();
 	//http://s1.gladiatus.vn/game/ajax/doArenaFight.php?dname=MacNhuocThu
 	var el = document.createElement('a');
 	el.href = urlMucNo;
