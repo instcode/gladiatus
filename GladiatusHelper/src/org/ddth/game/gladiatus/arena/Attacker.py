@@ -39,7 +39,7 @@ if __name__ == "__main__":
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
         attacker = Attacker("s1.gladiatus.vn", username, password);
-        attacker.login()
+        attacker.logon()
         attacker.strike(victim);
 
     except getopt.GetoptError:
