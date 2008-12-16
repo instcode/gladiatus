@@ -80,7 +80,9 @@ function showFightResult(params, chanceToWin, dmgDone, dmgReceived) {
 	objOpponent.parentNode.appendChild(document.createTextNode(' '));
 	var regexp = /p=(\d+)/;
 	var result = objOpponent.href.match(regexp);
-	var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
+	//var urlMucNo = siteUrl + 'mod=arena&pid='+result[1]+'&sh='+secureHash;
+	var urlMucNo = siteUrlAjax + 'doArenaFight.php?dname=' + encodeURIComponent(opponentStats['statsIndexCharname'])
+		+ '&a=' + new Date().getTime());
 	//http://s1.gladiatus.vn/game/ajax/doArenaFight.php?dname=MacNhuocThu
 	var el = document.createElement('a');
 	el.href = urlMucNo;
