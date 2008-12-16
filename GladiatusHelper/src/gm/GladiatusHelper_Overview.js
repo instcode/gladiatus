@@ -4,31 +4,42 @@
  *
  * @copyright (C) 2008, DDTH.ORG
  * @history
+ *   2008.12.16
+ *     - Gladiatus.vn upgraded to v0.4
  *   2008.08.28
  *     - Display HP in numbers (current/max)
  *     - Display Exp in numbers (current/max)
  */
  
 /*********** SETTING UP ***********/
-const statsIndexCharname     = 0;
-const statsIndexLevel        = 1;
-const statsIndexHP           = 2;
-const statsIndexExp          = 3;
-const statsIndexStrength     = 4;
-const statsIndexSkill        = 5;
-const statsIndexAgility      = 6;
-const statsIndexConstitution = 7;
-const statsIndexCharisma     = 8;
-const statsIndexIntelligence = 9;
-const statsIndexArmour       = 10;
-const statsIndexDamage1      = 11;
-const statsIndexDamage2      = 12;
-const statsIndexHPCurrent    = 13;
-const statsIndexHPMax        = 14;
-const statsIndexExpCurrent   = 15;
-const statsIndexExpMax       = 16;
-const statsIndexAbsorbMin    = 17;
-const statsIndexAbsorbMax    = 18;
+const statsIndexCharname       = 0;
+const statsIndexLevel          = 1;
+const statsIndexHP             = 2;
+const statsIndexExp            = 3;
+const statsIndexStrength       = 4;
+const statsIndexSkill          = 5;
+const statsIndexAgility        = 6;
+const statsIndexConstitution   = 7;
+const statsIndexCharisma       = 8;
+const statsIndexIntelligence   = 9;
+const statsIndexArmour         = 10;
+const statsIndexDamage1        = 11;
+const statsIndexDamage2        = 12;
+const statsIndexHPCurrent      = 13;
+const statsIndexHPMax          = 14;
+const statsIndexExpCurrent     = 15;
+const statsIndexExpMax         = 16;
+const statsIndexAbsorbMin      = 17;
+const statsIndexAbsorbMax      = 18;
+
+const statsChanceAvoidCrit     = 19;
+const statsValueAvoidCrit      = 20;
+
+const statsChanceBlockAttack   = 21;
+const statsValueBlockAttack    = 22;
+
+const statsChanceCrit          = 23;
+const statsValueCrit           = 24;
 
 var divCharStats = document.getElementById('panelCharStats');
 var divOverview = document.getElementById('panelOverview');
@@ -79,6 +90,19 @@ function getStats(params) {
 			var regexpResult = expStr.match(regexp);
 			stats[statsIndexExpCurrent] = parseInt(regexpResult[1]);
 			stats[statsIndexExpMax]     = parseInt(regexpResult[2]);
+			
+			var defenceStr = getDivAttribute(pulled, 'char_panzer_tt', 'id', 'onMouseOver');
+			var regexp = /nowrap=\\'nowrap\\'>(\d+)/;
+			var regexpResult = defenceStr.match(regexp);
+			alert(regexpResult);
+			//var regexp = /Khả năng hồi phục:.*?>(\d+)/;
+			//var regexpResult = defenceStr.match(regexp);
+			//stats[statsValueAvoidCrit] = parseInt(regexpResult[1]);
+			//var regexp = /May mắn né được những nhát đánh chí tử.::.*?>(\d+)/;
+			//var regexpResult = defenceStr.match(regexp);
+			//stats[statsValueAvoidCrit] = parseInt(regexpResult[1]);
+			
+			var offenceStr = getDivAttribute(pulled, 'char_schaden_tt', 'id', 'onMouseOver');
 
 			dmg = getSpanContent(pulled, 'char_schaden');
 			if ( dmg != '' ) {
