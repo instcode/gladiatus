@@ -81,7 +81,7 @@ class GladiatusBot:
         ajaxFailure = re.search('document.location.href=document.location.href;', http_result.content) is not None
         generalFailure = re.search('"http://%s/game/index.php.mod=login"' % (domain), http_result.content) is not None
         if ajaxFailure or generalFailure:
-            self.login()
+            self.logon()
             # Try to the execute service again
             return self.invoke(service_descriptor)
         try:
@@ -170,6 +170,9 @@ class GladiatusBot:
             })
         
     def stable(self):
+        """
+        Work in stable in 1 hour.
+        """
         def handler(http_result):
             if self.seconds('work') > 0:
                 self.log("Take a rest in horse stable...")
@@ -183,9 +186,16 @@ class GladiatusBot:
                 "handler": handler
             })
     
-    def attack(self, player, bashing = False):
-        if self.victims.has_key(player):
-            if bashing and time.time() <= self.victims[player] + 6*3600:
+    def attack(self, player, bashing = 0):
+        """
+        Description:
+            Attack the given player with bashing concern ;-)
+        Parameters:
+            bashing: Number of strike time in 24 hours. Pass 0 will bypass bashing checking.
+        """
+        quantum = round(24 * 3600 / bashing) if bashing > 0 else 0
+        if bashing > 0 and self.victims.has_key(player):
+            if time.time() <= self.victims[player] + quantum:
                 return False
 
         def handler(http_result):
@@ -193,8 +203,8 @@ class GladiatusBot:
                 self.log("Attacked %s successfully..." % (player))
                 self.victims[player] = time.time()
                 if bashing:
-                    next = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(self.victims[player]))
-                    self.log("Will try to attack %s again on %s" % (player, next))
+                    next = time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(self.victims[player] + quantum))
+                    self.log("Will try to attack %s again after %s" % (player, next))
                 return True
 
             if re.search('b.{1,4}n th.{1,4}p h.{1,4}n 25 .{1,4}i.{1,4}m', http_result.content) is not None:
@@ -207,6 +217,9 @@ class GladiatusBot:
                 self.save("arena", 15)
             elif re.search(r'document.location.href="(index.php[^;]*)";', http_result.content) is not None:
                 self.log("Cannot attack %s because you are working at horse stable." % (player))
+            elif re.search('Kh.{1,4}ng .{1,4}.{1,4} gold', http_result.content) is not None:
+                self.log("Cannot attack %s because you don't have enough gold." % (player))
+                self.save("arena", 15)
             else:
                 self.log("Cannot attack %s because you have just attacked someone in arena." % (player))
             return False
@@ -229,15 +242,6 @@ class GladiatusBot:
             })
 
     def expedition(self, where = 0):
-        """
-        Mist Mountains: 1 - Harpy (Nguoi dan ba la loi), Medusa (Nguoi ran), Cerberus (Cho 3 dau), Minotaur (Qui dau trau)
-        Dark Woods: 2 - Harpy, Medusa, Cerberus, Minotaur, Hog (?), Leopard (Bao), Bear (Gau), Wolf (Soi), Deserter (Ke dao ngu), Traditor (?), Rebel (Ke phien loan), Heretic (?)
-        Barbarian Village: 3 - Barbarian (Ke man ro), Berserk (Ke dien loan), Vandal (Ke pha hoai), Deserter, Traditor, Rebel, Heretic"
-        Bandit Camp: 4 - Bandit (Tho phi), Fled Slave (No le bo tron), Robber (Ke cuop), Out Law (Ke ngoai vong phap luat), Deserter, Traditor, Rebel, Heretic
-        Ancient Temple: 5 - Guard (Bao ve), Body Guard (Linh gac), Mercenary (?), Constable (?), Deserter, Traditor, Rebel, Heretic
-        Pirate Harbour: 6 - Pirate (Cuop bien), Smuggler (Ke buon lau), Deserter, Traditor, Rebel, Heretic
-        Wolf Cave: 7 - Wolf, Deserter, Traditor, Rebel, Heretic
-        """
         locations = ("Mist Mountains", "Dark Woods", "Barbarian Village", "Bandit Camp", "Ancient Temple", "Pirate Harbour", "Wolf Cave")
         if where > 0:
             def quest(http_result):
@@ -338,17 +342,9 @@ if __name__ == "__main__":
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
         
-        content = "http://s1.gladiatus.vn/game/index.php?mod=report&beid=2085953&sh=705d15ac254dcd758185fcd90a3e6f56"
-        m = re.search('mod=([^&]*)', content)
-        print m.group(1)
-        content = "http://s1.gladiatus.vn/game/index.php?beid=2085953&sh=705d15ac254dcd758185fcd90a3e6f56&mod=login"
-        m = re.search('mod=([^&]*)', content)
-        print m.group(1)
-        #strftime('%H:%M.%S')
-
-        #bot = GladiatusBot(server, username, password)
-        #bot.login()
-        #bot.stable()
+        bot = GladiatusBot(server, username, password)
+        bot.login()
+        bot.stable()
         
     except getopt.GetoptError:
-        print 'What''s up?'
+        print 'Interna...tional error! What''s up?'
