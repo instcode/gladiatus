@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
 	<classpathentry kind="lib" path="lib/xerces-2.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-4.0-alpha4.jar"/>
-	<classpathentry kind="lib" path="dist/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="/DinoAge/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
